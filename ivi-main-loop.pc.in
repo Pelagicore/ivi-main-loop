@@ -1,0 +1,11 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=@CMAKE_INSTALL_FULL_LIBDIR@
+includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@/@PACKAGE@
+
+Name: IVI Main Loop
+Description: IVI Main Loop
+Version: @VERSION@
+Requires: @ADDITIONAL_PKGCONFIG_DEPENDENCIES@
+Libs: -livi-main-loop @DEVELOPMENT_LIBRARY_PATH@ -L${libdir}
+Cflags: -std=c++11 @ADDITIONAL_PKGCONFIG_CFLAGS@ @DEVELOPMENT_INCLUDE_PATH@ -I${includedir}

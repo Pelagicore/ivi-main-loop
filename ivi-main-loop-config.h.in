@@ -1,0 +1,9 @@
+#pragma once
+
+#include "@DEFAULT_BACKEND@/ivi-main-loop-@DEFAULT_BACKEND@.h"
+
+namespace ivi {
+
+typedef @DEFAULT_BACKEND_CLASS@ DefaultDispatcherType;
+
+}
