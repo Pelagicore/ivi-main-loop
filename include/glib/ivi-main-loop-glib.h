@@ -9,19 +9,19 @@ static constexpr int UNREGISTERED_SOURCE = -1;
 
 class GlibEventDispatcher;
 
-class GLibIdle :
+class GLibIdleEventSource :
     public IdleEventSource
 {
 
 public:
-    GLibIdle(GlibEventDispatcher &mainLoop, CallBackFunction callBackFunction) :
+    GLibIdleEventSource(GlibEventDispatcher &mainLoop, CallBackFunction callBackFunction) :
         IdleEventSource(callBackFunction),
         m_mainLoop(mainLoop)
     {
         m_func = callBackFunction;
     }
 
-    ~GLibIdle();
+    ~GLibIdleEventSource();
 
     void enable() override;
 
@@ -36,17 +36,17 @@ private:
 };
 
 
-class GLibTimeOut :
+class GLibTimeOutEventSource :
     public TimeOutEventSource
 {
 public:
-    GLibTimeOut(GlibEventDispatcher &mainLoop, CallBackFunction callBackFunction, DurationInMilliseconds duration) :
+    GLibTimeOutEventSource(GlibEventDispatcher &mainLoop, CallBackFunction callBackFunction, DurationInMilliseconds duration) :
         TimeOutEventSource(duration, callBackFunction), m_mainLoop(mainLoop)
     {
     }
 
 public:
-    ~GLibTimeOut();
+    ~GLibTimeOutEventSource();
 
     void setDuration(DurationInMilliseconds duration) override;
 
@@ -61,14 +61,14 @@ private:
     GSource *m_source = nullptr;
 };
 
-class GLibFileDescriptorWatch :
+class GLibChannelWatchEventSource :
     public ChannelWatchEventSource
 {
 public:
-    GLibFileDescriptorWatch(GlibEventDispatcher &mainLoop, CallBackFunction callBackFunction, FileDescriptor fileDescriptor,
+    GLibChannelWatchEventSource(GlibEventDispatcher &mainLoop, CallBackFunction callBackFunction, FileDescriptor fileDescriptor,
                 Event events);
 
-    ~GLibFileDescriptorWatch();
+    ~GLibChannelWatchEventSource();
 
     void disable() override;
 
@@ -92,31 +92,38 @@ private:
 
 
 /**
- * That class implements the MainLoopInterface using glib's main loop functions
+ * That class implements the EventDispatcher interface using glib's main loop functions
  */
 class GlibEventDispatcher :
     public EventDispatcher
 {
 public:
-    typedef GLibIdle IdleEventSourceType;
-    typedef GLibTimeOut TimoutEventSourceType;
-    typedef GLibFileDescriptorWatch FileDescriptorWatchEventSourceType;
+    typedef GLibIdleEventSource IdleEventSourceType;
+    typedef GLibTimeOutEventSource TimoutEventSourceType;
+    typedef GLibChannelWatchEventSource FileDescriptorWatchEventSourceType;
 
-    GlibEventDispatcher(GMainContext *context = nullptr);
+    /**
+     * Construct an instance using Glib's default main context if we do not have any instance of GlibEventDispatcher using that
+     * context yet, otherwise we create a dedicated context
+     */
+    GlibEventDispatcher();
 
     IdleEventSource *newIdleEventSource(const IdleEventSource::CallBackFunction &callBackFunction) final override;
 
-    TimeOutEventSource *newTimeoutEventSource(const TimeOutEventSource::CallBackFunction &callBackFunction,
+    TimeOutEventSource *newTimeOutEventSource(const TimeOutEventSource::CallBackFunction &callBackFunction,
                 DurationInMilliseconds duration) final override;
 
-    ChannelWatchEventSource *newFileDescriptorWatchEventSource(
-                const ChannelWatchEventSource::CallBackFunction &callBackFunction, FileDescriptor filedescriptor,
-				ChannelWatchEventSource::Event events) final override;
+    ChannelWatchEventSource *newChannelWatchEventSource(const ChannelWatchEventSource::CallBackFunction &callBackFunction,
+                FileDescriptor filedescriptor,
+                ChannelWatchEventSource::Event events) final override;
 
     void run() final override;
 
     void quit() final override;
 
+    /**
+     * Return the glib main context reference
+     */
     GMainContext *getGMainContext()
     {
         return m_context;
@@ -125,6 +132,8 @@ public:
 private:
     GMainContext *m_context = nullptr;
     GMainLoop *m_mainLoop = nullptr;
+
+    static bool s_bDefaultContextAlreadyUsed;
 
 };
 

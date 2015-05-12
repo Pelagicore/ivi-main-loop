@@ -67,3 +67,4 @@ set(IVI_MAIN_LOOP_LIBRARIES ivi-main-loop)
 set(PATHS_DEFINED 1)
 add_subdirectory(examples)
 
+add_subdirectory (doc)

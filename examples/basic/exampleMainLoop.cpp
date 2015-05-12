@@ -31,7 +31,7 @@ int main(int argc, const char * *argv)
     fd_set_non_blocking(pipeIn);
     fd_set_non_blocking(pipeOut);
 
-    TimeOutEventSource *timeOutSource = mainLoop.newTimeoutEventSource([&]() {
+    TimeOutEventSource *timeOutSource = mainLoop.newTimeOutEventSource([&]() {
                 log_debug() << "Writing to pipe ";
 
                 char bytes[64] = {};
@@ -44,7 +44,7 @@ int main(int argc, const char * *argv)
             }, 1000);
     timeOutSource->enable();
 
-    TimeOutEventSource *timeOutSourceClose = mainLoop.newTimeoutEventSource([&]() {
+    TimeOutEventSource *timeOutSourceClose = mainLoop.newTimeOutEventSource([&]() {
                 log_debug() << "Closing pipe";
                 close(pipeOut);
                 return TimeOutEventSource::ReportStatus::DISABLE;
@@ -62,14 +62,14 @@ int main(int argc, const char * *argv)
             });
     idleSource->enable();
 
-    TimeOutEventSource *timeOutSource3 = mainLoop.newTimeoutEventSource([&]() {
+    TimeOutEventSource *timeOutSource3 = mainLoop.newTimeOutEventSource([&]() {
                 log_debug() << "Stopping idle source ";
                 idleSource->disable();
                 return TimeOutEventSource::ReportStatus::DISABLE;
             }, 2000);
     timeOutSource3->enable();
 
-    auto *fdInputSource = mainLoop.newFileDescriptorWatchEventSource([&](
+    auto *fdInputSource = mainLoop.newChannelWatchEventSource([&](
                 ChannelWatchEventSource::Event e) {
                 log_debug() << "Data received ";
 
@@ -88,8 +88,8 @@ int main(int argc, const char * *argv)
             }, pipeIn, ChannelWatchEventSource::Event::READ_AVAILABLE);
     fdInputSource->enable();
 
-    auto *fdHangUpSource = mainLoop.newFileDescriptorWatchEventSource([&](
-    		ChannelWatchEventSource::Event e) {
+    auto *fdHangUpSource = mainLoop.newChannelWatchEventSource([&](
+                ChannelWatchEventSource::Event e) {
                 log_debug() << "Hang up detected => exit main loop";
                 mainLoop.quit();
                 return ChannelWatchEventSource::ReportStatus::DISABLE;

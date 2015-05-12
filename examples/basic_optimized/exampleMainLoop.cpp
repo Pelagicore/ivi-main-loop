@@ -70,7 +70,7 @@ int main(int argc, const char * *argv)
     timeOutSource3.enable();
 
     DefaultDispatcherType::FileDescriptorWatchEventSourceType fdInputSource(mainLoop, [&](
-    		ChannelWatchEventSource::Event e) {
+                ChannelWatchEventSource::Event e) {
                 static int i = 0;
                 log_debug() << "data received " << i;
 
@@ -90,7 +90,7 @@ int main(int argc, const char * *argv)
     fdInputSource.enable();
 
     DefaultDispatcherType::FileDescriptorWatchEventSourceType fdHangUpSource(mainLoop, [&](
-    		ChannelWatchEventSource::Event e) {
+                ChannelWatchEventSource::Event e) {
                 log_debug() << "Hang up detected => exit main loop";
                 mainLoop.quit();
                 return ChannelWatchEventSource::ReportStatus::DISABLE;

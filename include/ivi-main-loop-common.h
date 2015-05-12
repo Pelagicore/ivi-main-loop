@@ -143,12 +143,18 @@ public:
      */
     virtual IdleEventSource *newIdleEventSource(const IdleEventSource::CallBackFunction &callBackFunction) = 0;
 
-    virtual TimeOutEventSource *newTimeoutEventSource(const TimeOutEventSource::CallBackFunction &callBackFunction,
+    /**
+     * Create a new timeout event source. The initial duration can be provided here, but it can also be altered using the returned object
+     */
+    virtual TimeOutEventSource *newTimeOutEventSource(const TimeOutEventSource::CallBackFunction &callBackFunction,
                 DurationInMilliseconds duration) = 0;
 
-    virtual ChannelWatchEventSource *newFileDescriptorWatchEventSource(
-                const ChannelWatchEventSource::CallBackFunction &callBackFunction, FileDescriptor fileDescriptor,
-				ChannelWatchEventSource::Event events) = 0;
+    /**
+     * Create a new channel watch event source.
+     */
+    virtual ChannelWatchEventSource *newChannelWatchEventSource(const ChannelWatchEventSource::CallBackFunction &callBackFunction,
+                FileDescriptor fileDescriptor,
+                ChannelWatchEventSource::Event events) = 0;
 
 };
 
