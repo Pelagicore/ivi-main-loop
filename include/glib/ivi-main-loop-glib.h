@@ -62,7 +62,7 @@ private:
 };
 
 class GLibFileDescriptorWatch :
-    public FileDescriptorWatchEventSource
+    public ChannelWatchEventSource
 {
 public:
     GLibFileDescriptorWatch(GlibEventDispatcher &mainLoop, CallBackFunction callBackFunction, FileDescriptor fileDescriptor,
@@ -109,9 +109,9 @@ public:
     TimeOutEventSource *newTimeoutEventSource(const TimeOutEventSource::CallBackFunction &callBackFunction,
                 DurationInMilliseconds duration) final override;
 
-    FileDescriptorWatchEventSource *newFileDescriptorWatchEventSource(
-                const FileDescriptorWatchEventSource::CallBackFunction &callBackFunction, FileDescriptor filedescriptor,
-                FileDescriptorWatchEventSource::Event events) final override;
+    ChannelWatchEventSource *newFileDescriptorWatchEventSource(
+                const ChannelWatchEventSource::CallBackFunction &callBackFunction, FileDescriptor filedescriptor,
+				ChannelWatchEventSource::Event events) final override;
 
     void run() final override;
 

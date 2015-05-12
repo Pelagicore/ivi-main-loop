@@ -32,7 +32,7 @@ int main(int argc, const char * *argv)
     fd_set_non_blocking(pipeOut);
 
     DefaultDispatcherType::TimoutEventSourceType timeOutSource(mainLoop, [&]() {
-                                log_debug() << "Writing to pipe ";
+                log_debug() << "Writing to pipe ";
 
                 char bytes[64] = {};
                 if (write(pipeOut, bytes, sizeof(bytes)) != sizeof(bytes)) {
@@ -70,7 +70,7 @@ int main(int argc, const char * *argv)
     timeOutSource3.enable();
 
     DefaultDispatcherType::FileDescriptorWatchEventSourceType fdInputSource(mainLoop, [&](
-                FileDescriptorWatchEventSource::Event e) {
+    		ChannelWatchEventSource::Event e) {
                 static int i = 0;
                 log_debug() << "data received " << i;
 
@@ -84,17 +84,17 @@ int main(int argc, const char * *argv)
                     log_debug() << r << " bytes read";
                 }
 
-                return FileDescriptorWatchEventSource::ReportStatus::KEEP_ENABLED;
+                return ChannelWatchEventSource::ReportStatus::KEEP_ENABLED;
 
-            }, pipeIn, FileDescriptorWatchEventSource::Event::READ_AVAILABLE);
+            }, pipeIn, ChannelWatchEventSource::Event::READ_AVAILABLE);
     fdInputSource.enable();
 
     DefaultDispatcherType::FileDescriptorWatchEventSourceType fdHangUpSource(mainLoop, [&](
-                FileDescriptorWatchEventSource::Event e) {
+    		ChannelWatchEventSource::Event e) {
                 log_debug() << "Hang up detected => exit main loop";
                 mainLoop.quit();
-                return FileDescriptorWatchEventSource::ReportStatus::DISABLE;
-            }, pipeIn, FileDescriptorWatchEventSource::Event::HANG_UP);
+                return ChannelWatchEventSource::ReportStatus::DISABLE;
+            }, pipeIn, ChannelWatchEventSource::Event::HANG_UP);
     fdHangUpSource.enable();
 
     // Run the main loop. The method will return after the quit() method has been called

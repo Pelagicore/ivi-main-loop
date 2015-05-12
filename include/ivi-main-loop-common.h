@@ -34,7 +34,7 @@ public:
 };
 
 /**
- * An idle event source can be used to be notified whenever no other source is triggered
+ * An idle event source can be used to be notified whenever a dispatcher has no non-idle to trigger
  */
 class IdleEventSource :
     public EventSource
@@ -59,7 +59,7 @@ protected:
 typedef int DurationInMilliseconds;
 
 /**
- * A timeout source is after a certain amount of time.
+ * A timeout source is triggered after a certain amount of time.
  */
 class TimeOutEventSource :
     public EventSource
@@ -76,7 +76,7 @@ public:
     {
     }
 
-    DurationInMilliseconds getDuration()
+    DurationInMilliseconds getDuration() const
     {
         return m_duration;
     }
@@ -89,7 +89,11 @@ protected:
 
 };
 
-class FileDescriptorWatchEventSource :
+/**
+ * This kind of source can be used to be notified whenever an event has occurred concerning a channel.
+ * The channel is typically identified by a file descriptor.
+ */
+class ChannelWatchEventSource :
     public EventSource
 {
 public:
@@ -110,12 +114,12 @@ public:
 
     typedef std::function<ReportStatus(Event)> CallBackFunction;
 
-    FileDescriptorWatchEventSource(const CallBackFunction &callBackFunction) :
+    ChannelWatchEventSource(const CallBackFunction &callBackFunction) :
         m_callBack(callBackFunction)
     {
     }
 
-    virtual ~FileDescriptorWatchEventSource()
+    virtual ~ChannelWatchEventSource()
     {
     }
 
@@ -124,30 +128,46 @@ protected:
 
 };
 
-class MainLoop
+/**
+ * That interface is used to create new sources attached to a dispatcher
+ */
+class EventSourceFactory
 {
 public:
-    virtual ~MainLoop()
+    virtual ~EventSourceFactory()
     {
     }
 
+    /**
+     * Create a new idle event source.
+     */
     virtual IdleEventSource *newIdleEventSource(const IdleEventSource::CallBackFunction &callBackFunction) = 0;
 
     virtual TimeOutEventSource *newTimeoutEventSource(const TimeOutEventSource::CallBackFunction &callBackFunction,
                 DurationInMilliseconds duration) = 0;
 
-    virtual FileDescriptorWatchEventSource *newFileDescriptorWatchEventSource(
-                const FileDescriptorWatchEventSource::CallBackFunction &callBackFunction, FileDescriptor fileDescriptor,
-                FileDescriptorWatchEventSource::Event events) = 0;
+    virtual ChannelWatchEventSource *newFileDescriptorWatchEventSource(
+                const ChannelWatchEventSource::CallBackFunction &callBackFunction, FileDescriptor fileDescriptor,
+				ChannelWatchEventSource::Event events) = 0;
 
 };
 
+/**
+ * Event dispatcher interface. An event dispatcher implements a main loop is able to handle various event sources.
+ */
 class EventDispatcher :
-    public MainLoop
+    public EventSourceFactory
 {
+    /**
+     * Runs the main loop. That method does not return until the quit() method has been called.
+     */
     virtual void run() = 0;
 
+    /**
+     * Stops the main loop. Calling that method causes the main loop to stop handling any event and ensures that the run() method exits as soon as possible.
+     */
     virtual void quit() = 0;
+
 };
 
 }

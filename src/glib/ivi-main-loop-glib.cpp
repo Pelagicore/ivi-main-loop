@@ -59,14 +59,14 @@ inline GIOCondition &operator|=(GIOCondition &c1, const GIOCondition c2)
     return c1;
 }
 
-inline FileDescriptorWatchEventSource::Event operator|(const FileDescriptorWatchEventSource::Event c1,
-            const FileDescriptorWatchEventSource::Event c2)
+inline ChannelWatchEventSource::Event operator|(const ChannelWatchEventSource::Event c1,
+            const ChannelWatchEventSource::Event c2)
 {
-    return static_cast<FileDescriptorWatchEventSource::Event>(static_cast<int>(c1) | static_cast<int>(c2));
+    return static_cast<ChannelWatchEventSource::Event>(static_cast<int>(c1) | static_cast<int>(c2));
 }
 
-inline FileDescriptorWatchEventSource::Event &operator|=(FileDescriptorWatchEventSource::Event &c1,
-            const FileDescriptorWatchEventSource::Event c2)
+inline ChannelWatchEventSource::Event &operator|=(ChannelWatchEventSource::Event &c1,
+            const ChannelWatchEventSource::Event c2)
 {
     c1 = c1 | c2;
     return c1;
@@ -154,7 +154,7 @@ gboolean GLibTimeOut::onTimerCallback(gpointer data)
 GLibFileDescriptorWatch::GLibFileDescriptorWatch(GlibEventDispatcher &mainLoop, CallBackFunction callBackFunction,
             FileDescriptor fileDescriptor,
             Event events) :
-    FileDescriptorWatchEventSource(callBackFunction), m_mainLoop(mainLoop), m_events(events)
+		ChannelWatchEventSource(callBackFunction), m_mainLoop(mainLoop), m_events(events)
 {
     m_channel = g_io_channel_unix_new(fileDescriptor);
 }
@@ -268,9 +268,9 @@ TimeOutEventSource *GlibEventDispatcher::newTimeoutEventSource(const TimeOutEven
     return new GLibTimeOut(*this, callBackFunction, duration);
 }
 
-FileDescriptorWatchEventSource *GlibEventDispatcher::newFileDescriptorWatchEventSource(
-            const FileDescriptorWatchEventSource::CallBackFunction &callBackFunction, FileDescriptor fileDescriptor,
-            FileDescriptorWatchEventSource::Event events)
+ChannelWatchEventSource *GlibEventDispatcher::newFileDescriptorWatchEventSource(
+            const ChannelWatchEventSource::CallBackFunction &callBackFunction, FileDescriptor fileDescriptor,
+			ChannelWatchEventSource::Event events)
 {
     return new GLibFileDescriptorWatch(*this, callBackFunction, fileDescriptor, events);
 }
