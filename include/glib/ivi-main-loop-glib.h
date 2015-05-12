@@ -90,7 +90,6 @@ private:
 
 };
 
-
 /**
  * That class implements the EventDispatcher interface using glib's main loop functions
  */
@@ -99,7 +98,7 @@ class GLibEventDispatcher :
 {
 public:
     typedef GLibIdleEventSource IdleEventSourceType;
-    typedef GLibTimeOutEventSource TimoutEventSourceType;
+    typedef GLibTimeOutEventSource TimeOutEventSourceType;
     typedef GLibChannelWatchEventSource FileDescriptorWatchEventSourceType;
 
     /**
@@ -107,6 +106,11 @@ public:
      * context yet, otherwise we create a dedicated context
      */
     GLibEventDispatcher();
+
+    /**
+     * Construct a glib event dispatcher using the given context
+     */
+    GLibEventDispatcher(GMainContext* context);
 
     IdleEventSource *newIdleEventSource(const IdleEventSource::CallBackFunction &callBackFunction) final override;
 

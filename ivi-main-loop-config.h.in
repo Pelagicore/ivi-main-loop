@@ -4,6 +4,6 @@
 
 namespace ivi {
 
-typedef @DEFAULT_BACKEND_CLASS@ DefaultDispatcherType;
+typedef @DEFAULT_BACKEND_CLASS@ DefaultEventDispatcherType;
 
 }

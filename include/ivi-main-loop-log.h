@@ -5,8 +5,8 @@
 #ifdef USE_IVI_LOGGING
 #include "ivi-logging.h"
 #else
-#define log_debug() Log(std::cout).stream()
-#define log_error() Log(std::cerr).stream()
+#define log_debug() ivi::Log(std::cout).stream()
+#define log_error() ivi::Log(std::cerr).stream()
 #define LOG_DECLARE_CONTEXT
 #endif
 

@@ -164,6 +164,7 @@ public:
 class EventDispatcher :
     public EventSourceFactory
 {
+
     /**
      * Runs the main loop. That method does not return until the quit() method has been called.
      */

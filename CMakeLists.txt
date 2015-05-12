@@ -23,7 +23,6 @@ if (USE_IVI_LOGGING)
     add_definitions(-DUSE_IVI_LOGGING)
 endif()
 
-
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11")
 
 include_directories(
@@ -53,8 +52,8 @@ configure_file(ivi-main-loop.pc.in ivi-main-loop.pc @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ivi-main-loop.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 set(DEVELOPMENT_INCLUDE_PATH " -I${CMAKE_CURRENT_SOURCE_DIR}/include -I${CMAKE_CURRENT_BINARY_DIR} #")
-set(DEVELOPMENT_LIBRARY_PATH " -L${CMAKE_CURRENT_BINARY_DIR}/src #" )
-configure_file(ivi-main-loop.pc.in ivi-main-loop-uninstalled.pc)
+set(DEVELOPMENT_LIBRARY_PATH " -L${CMAKE_CURRENT_BINARY_DIR}/src/glib #" )
+configure_file(ivi-main-loop.pc.in ivi-main-loop-uninstalled.pc @ONLY)
 if(INSTALL_PKGCONFIG_UNINSTALLED_FILE)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ivi-main-loop-uninstalled.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 endif()

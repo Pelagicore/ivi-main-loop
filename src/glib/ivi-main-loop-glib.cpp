@@ -246,6 +246,11 @@ GLibEventDispatcher::GLibEventDispatcher()
     }
 }
 
+GLibEventDispatcher::GLibEventDispatcher(GMainContext* context)
+{
+	m_context = context;
+}
+
 void GLibEventDispatcher::run()
 {
     log_debug() << "run";
