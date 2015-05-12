@@ -6,3 +6,4 @@ This package provides a main loop abstraction, which can be useful to implement 
 
 A default implementation of the abstraction is provided using glib's main loop framework, which is one of the popular and widely used main loop frameworks in the OSS.
 
+Copyright Pelagicore &copy; 2015
