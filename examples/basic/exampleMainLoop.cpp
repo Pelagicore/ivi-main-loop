@@ -1,3 +1,9 @@
+/**
+ * Basic example using the main loop abstraction.
+ * That example creates a pipe where bytes are regularly written and read, using the various kind of event sources available.
+ * An idle event source is also used to be notified whenever nothing has to be done.
+ */
+
 #include "ivi-main-loop.h"
 #include "ivi-main-loop-log.h"
 
@@ -13,9 +19,6 @@ void fd_set_non_blocking(int fd)
 
 using namespace ivi;
 
-/**
- * Basic example using the main loop abstraction
- */
 int main(int argc, const char * *argv)
 {
     DefaultDispatcherType mainLoop;
@@ -31,77 +34,77 @@ int main(int argc, const char * *argv)
     fd_set_non_blocking(pipeIn);
     fd_set_non_blocking(pipeOut);
 
-    TimeOutEventSource *timeOutSource = mainLoop.newTimeOutEventSource([&]() {
-                log_debug() << "Writing to pipe ";
+    /// Create a timeout which triggers the writing to the pipe
+    DefaultDispatcherType::TimoutEventSourceType timeOutSource(mainLoop, [&]() {
 
                 char bytes[64] = {};
-                if (write(pipeOut, bytes, sizeof(bytes)) != sizeof(bytes)) {
-                    log_error() << "Can not write data";
-                    exit(-1);
+                auto n = write(pipeOut, bytes, sizeof(bytes));
+                if ( n == sizeof(bytes)) {
+                    log_debug() << "Written " << n << " bytes to pipe";
+               } else {
+                    log_error() << "Can not write data to pipe";
+                    mainLoop.quit();
                 }
 
                 return TimeOutEventSource::ReportStatus::KEEP_ENABLED;
             }, 1000);
-    timeOutSource->enable();
+    timeOutSource.enable();
 
-    TimeOutEventSource *timeOutSourceClose = mainLoop.newTimeOutEventSource([&]() {
+    /// Create a timeout which triggers the closing of the pipe
+    DefaultDispatcherType::TimoutEventSourceType timeOutSourceClose(mainLoop, [&]() {
                 log_debug() << "Closing pipe";
                 close(pipeOut);
                 return TimeOutEventSource::ReportStatus::DISABLE;
             }, 5000);
-    timeOutSourceClose->enable();
+    timeOutSourceClose.enable();
 
-    IdleEventSource *idleSource = mainLoop.newIdleEventSource([&]() {
+    /// Create a timeout which triggers the writing to the pipe
+    DefaultDispatcherType::IdleEventSourceType idleSource(mainLoop, [&]() {
                 static int i = 0;
                 i++;
-                if (i % 500000 == 0) {
-                    log_debug() << "idle called " << i << " times";
-                }
+                log_debug() << "idle called " << i << " times";
+
+                usleep(100000);
 
                 return IdleEventSource::ReportStatus::KEEP_ENABLED;
             });
-    idleSource->enable();
+    idleSource.enable();
 
-    TimeOutEventSource *timeOutSource3 = mainLoop.newTimeOutEventSource([&]() {
-                log_debug() << "Stopping idle source ";
-                idleSource->disable();
+    DefaultDispatcherType::TimoutEventSourceType timeOutStopIdle(mainLoop, [&]() {
+                idleSource.disable();
+                log_debug() << "Idle source disabled";
                 return TimeOutEventSource::ReportStatus::DISABLE;
             }, 2000);
-    timeOutSource3->enable();
+    timeOutStopIdle.enable();
 
-    auto *fdInputSource = mainLoop.newChannelWatchEventSource([&](
+    DefaultDispatcherType::FileDescriptorWatchEventSourceType pipeInputSource(mainLoop, [&](
                 ChannelWatchEventSource::Event e) {
-                log_debug() << "Data received ";
 
                 char bytes[64];
 
                 auto r = read(pipeIn, bytes, sizeof(bytes));
                 if (r < 0) {
                     log_error() << "Can not read data";
-                    exit(-1);
+                    mainLoop.quit();
                 } else {
-                    log_debug() << r << " bytes read";
+                    log_debug() << "Read " << r << " bytes from pipe";
                 }
 
                 return ChannelWatchEventSource::ReportStatus::KEEP_ENABLED;
 
             }, pipeIn, ChannelWatchEventSource::Event::READ_AVAILABLE);
-    fdInputSource->enable();
+    pipeInputSource.enable();
 
-    auto *fdHangUpSource = mainLoop.newChannelWatchEventSource([&](
+    DefaultDispatcherType::FileDescriptorWatchEventSourceType hangUpSource(mainLoop, [&](
                 ChannelWatchEventSource::Event e) {
                 log_debug() << "Hang up detected => exit main loop";
                 mainLoop.quit();
                 return ChannelWatchEventSource::ReportStatus::DISABLE;
             }, pipeIn, ChannelWatchEventSource::Event::HANG_UP);
-    fdHangUpSource->enable();
+    hangUpSource.enable();
 
     // Run the main loop. The method will return after the quit() method has been called
     mainLoop.run();
-
-    delete timeOutSource;
-    delete fdInputSource;
-    delete fdHangUpSource;
 
     log_debug() << "Terminated";
 

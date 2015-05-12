@@ -31,7 +31,7 @@ int main(int argc, const char * *argv)
     fd_set_non_blocking(pipeIn);
     fd_set_non_blocking(pipeOut);
 
-    DefaultDispatcherType::TimoutEventSourceType timeOutSource(mainLoop, [&]() {
+    TimeOutEventSource *timeOutSource = mainLoop.newTimeOutEventSource([&]() {
                 log_debug() << "Writing to pipe ";
 
                 char bytes[64] = {};
@@ -42,16 +42,16 @@ int main(int argc, const char * *argv)
 
                 return TimeOutEventSource::ReportStatus::KEEP_ENABLED;
             }, 1000);
-    timeOutSource.enable();
+    timeOutSource->enable();
 
-    DefaultDispatcherType::TimoutEventSourceType timeOutSourceClose(mainLoop, [&]() {
+    TimeOutEventSource *timeOutSourceClose = mainLoop.newTimeOutEventSource([&]() {
                 log_debug() << "Closing pipe";
                 close(pipeOut);
                 return TimeOutEventSource::ReportStatus::DISABLE;
             }, 5000);
-    timeOutSourceClose.enable();
+    timeOutSourceClose->enable();
 
-    DefaultDispatcherType::IdleEventSourceType idleSource(mainLoop, [&]() {
+    IdleEventSource *idleSource = mainLoop.newIdleEventSource([&]() {
                 static int i = 0;
                 i++;
                 if (i % 500000 == 0) {
@@ -60,19 +60,18 @@ int main(int argc, const char * *argv)
 
                 return IdleEventSource::ReportStatus::KEEP_ENABLED;
             });
-    idleSource.enable();
+    idleSource->enable();
 
-    DefaultDispatcherType::TimoutEventSourceType timeOutSource3(mainLoop, [&]() {
+    TimeOutEventSource *timeOutSource3 = mainLoop.newTimeOutEventSource([&]() {
                 log_debug() << "Stopping idle source ";
-                idleSource.disable();
+                idleSource->disable();
                 return TimeOutEventSource::ReportStatus::DISABLE;
             }, 2000);
-    timeOutSource3.enable();
+    timeOutSource3->enable();
 
-    DefaultDispatcherType::FileDescriptorWatchEventSourceType fdInputSource(mainLoop, [&](
+    auto *fdInputSource = mainLoop.newChannelWatchEventSource([&](
                 ChannelWatchEventSource::Event e) {
-                static int i = 0;
-                log_debug() << "data received " << i;
+                log_debug() << "Data received ";
 
                 char bytes[64];
 
@@ -87,18 +86,22 @@ int main(int argc, const char * *argv)
                 return ChannelWatchEventSource::ReportStatus::KEEP_ENABLED;
 
             }, pipeIn, ChannelWatchEventSource::Event::READ_AVAILABLE);
-    fdInputSource.enable();
+    fdInputSource->enable();
 
-    DefaultDispatcherType::FileDescriptorWatchEventSourceType fdHangUpSource(mainLoop, [&](
+    auto *fdHangUpSource = mainLoop.newChannelWatchEventSource([&](
                 ChannelWatchEventSource::Event e) {
                 log_debug() << "Hang up detected => exit main loop";
                 mainLoop.quit();
                 return ChannelWatchEventSource::ReportStatus::DISABLE;
             }, pipeIn, ChannelWatchEventSource::Event::HANG_UP);
-    fdHangUpSource.enable();
+    fdHangUpSource->enable();
 
     // Run the main loop. The method will return after the quit() method has been called
     mainLoop.run();
+
+    delete timeOutSource;
+    delete fdInputSource;
+    delete fdHangUpSource;
 
     log_debug() << "Terminated";
 

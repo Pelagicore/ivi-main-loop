@@ -81,19 +81,21 @@ void GLibIdleEventSource::enable()
 {
     if (m_source == nullptr) {
         m_source = g_idle_source_new();
-        g_source_set_callback(m_source, &onGlibCallback, this, nullptr);
+        g_source_set_callback(m_source, &onGLibCallback, this, nullptr);
         g_source_attach(m_source, m_mainLoop.getGMainContext());
     }
 }
 
 void GLibIdleEventSource::disable()
 {
-    g_source_destroy(m_source);
-    g_source_unref(m_source);
-    m_source = nullptr;
+    if (m_source != nullptr) {
+        g_source_destroy(m_source);
+        g_source_unref(m_source);
+        m_source = nullptr;
+    }
 }
 
-gboolean GLibIdleEventSource::onGlibCallback(gpointer data)
+gboolean GLibIdleEventSource::onGLibCallback(gpointer data)
 {
     auto thiz = static_cast<GLibIdleEventSource *>(data);
 
@@ -151,7 +153,7 @@ gboolean GLibTimeOutEventSource::onTimerCallback(gpointer data)
 
 }
 
-GLibChannelWatchEventSource::GLibChannelWatchEventSource(GlibEventDispatcher &mainLoop, CallBackFunction callBackFunction,
+GLibChannelWatchEventSource::GLibChannelWatchEventSource(GLibEventDispatcher &mainLoop, CallBackFunction callBackFunction,
             FileDescriptor fileDescriptor,
             Event events) :
     ChannelWatchEventSource(callBackFunction), m_mainLoop(mainLoop), m_events(events)
@@ -212,12 +214,12 @@ void GLibChannelWatchEventSource::enable()
     if (!m_isEnabled) {
 
         inputSourceID = g_io_add_watch_full_with_context(m_channel, G_PRIORITY_DEFAULT, toGIOCondition(m_events),
-                    onSocketDataAvailableGlibCallback, this, nullptr, m_mainLoop.getGMainContext());
+                    onSocketDataAvailableGLibCallback, this, nullptr, m_mainLoop.getGMainContext());
         m_isEnabled = true;
     }
 }
 
-gboolean GLibChannelWatchEventSource::onSocketDataAvailableGlibCallback(GIOChannel *gio, GIOCondition condition, gpointer data)
+gboolean GLibChannelWatchEventSource::onSocketDataAvailableGLibCallback(GIOChannel *gio, GIOCondition condition, gpointer data)
 {
     GLibChannelWatchEventSource *thiz = static_cast<GLibChannelWatchEventSource *>(data);
     Event event = toEventSource(condition);
@@ -234,7 +236,7 @@ gboolean GLibChannelWatchEventSource::onSocketDataAvailableGlibCallback(GIOChann
     }
 }
 
-GlibEventDispatcher::GlibEventDispatcher()
+GLibEventDispatcher::GLibEventDispatcher()
 {
     if (!s_bDefaultContextAlreadyUsed) {
         m_context = nullptr;
@@ -244,7 +246,7 @@ GlibEventDispatcher::GlibEventDispatcher()
     }
 }
 
-void GlibEventDispatcher::run()
+void GLibEventDispatcher::run()
 {
     log_debug() << "run";
 
@@ -256,30 +258,30 @@ void GlibEventDispatcher::run()
     m_mainLoop = nullptr;
 }
 
-void GlibEventDispatcher::quit()
+void GLibEventDispatcher::quit()
 {
     log_debug() << "quit";
     g_main_loop_quit(m_mainLoop);
 }
 
-IdleEventSource *GlibEventDispatcher::newIdleEventSource(const IdleEventSource::CallBackFunction &callBackFunction)
+IdleEventSource *GLibEventDispatcher::newIdleEventSource(const IdleEventSource::CallBackFunction &callBackFunction)
 {
     return new GLibIdleEventSource(*this, callBackFunction);
 }
 
-TimeOutEventSource *GlibEventDispatcher::newTimeOutEventSource(const TimeOutEventSource::CallBackFunction &callBackFunction,
+TimeOutEventSource *GLibEventDispatcher::newTimeOutEventSource(const TimeOutEventSource::CallBackFunction &callBackFunction,
             DurationInMilliseconds duration)
 {
     return new GLibTimeOutEventSource(*this, callBackFunction, duration);
 }
 
-ChannelWatchEventSource *GlibEventDispatcher::newChannelWatchEventSource(
+ChannelWatchEventSource *GLibEventDispatcher::newChannelWatchEventSource(
             const ChannelWatchEventSource::CallBackFunction &callBackFunction, FileDescriptor fileDescriptor,
             ChannelWatchEventSource::Event events)
 {
     return new GLibChannelWatchEventSource(*this, callBackFunction, fileDescriptor, events);
 }
 
-bool GlibEventDispatcher::s_bDefaultContextAlreadyUsed = false;
+bool GLibEventDispatcher::s_bDefaultContextAlreadyUsed = false;
 
 }

@@ -7,14 +7,14 @@ namespace ivi {
 
 static constexpr int UNREGISTERED_SOURCE = -1;
 
-class GlibEventDispatcher;
+class GLibEventDispatcher;
 
 class GLibIdleEventSource :
     public IdleEventSource
 {
 
 public:
-    GLibIdleEventSource(GlibEventDispatcher &mainLoop, CallBackFunction callBackFunction) :
+    GLibIdleEventSource(GLibEventDispatcher &mainLoop, CallBackFunction callBackFunction) :
         IdleEventSource(callBackFunction),
         m_mainLoop(mainLoop)
     {
@@ -28,10 +28,10 @@ public:
     void disable() override;
 
 private:
-    static gboolean onGlibCallback(gpointer data);
+    static gboolean onGLibCallback(gpointer data);
 
     GSource *m_source = nullptr;
-    GlibEventDispatcher &m_mainLoop;
+    GLibEventDispatcher &m_mainLoop;
 
 };
 
@@ -40,7 +40,7 @@ class GLibTimeOutEventSource :
     public TimeOutEventSource
 {
 public:
-    GLibTimeOutEventSource(GlibEventDispatcher &mainLoop, CallBackFunction callBackFunction, DurationInMilliseconds duration) :
+    GLibTimeOutEventSource(GLibEventDispatcher &mainLoop, CallBackFunction callBackFunction, DurationInMilliseconds duration) :
         TimeOutEventSource(duration, callBackFunction), m_mainLoop(mainLoop)
     {
     }
@@ -57,7 +57,7 @@ public:
 private:
     static gboolean onTimerCallback(gpointer data);
 
-    GlibEventDispatcher &m_mainLoop;
+    GLibEventDispatcher &m_mainLoop;
     GSource *m_source = nullptr;
 };
 
@@ -65,7 +65,7 @@ class GLibChannelWatchEventSource :
     public ChannelWatchEventSource
 {
 public:
-    GLibChannelWatchEventSource(GlibEventDispatcher &mainLoop, CallBackFunction callBackFunction, FileDescriptor fileDescriptor,
+    GLibChannelWatchEventSource(GLibEventDispatcher &mainLoop, CallBackFunction callBackFunction, FileDescriptor fileDescriptor,
                 Event events);
 
     ~GLibChannelWatchEventSource();
@@ -75,7 +75,7 @@ public:
     void enable() override;
 
 private:
-    static gboolean onSocketDataAvailableGlibCallback(GIOChannel *gio, GIOCondition condition, gpointer data);
+    static gboolean onSocketDataAvailableGLibCallback(GIOChannel *gio, GIOCondition condition, gpointer data);
 
     static Event toEventSource(const GIOCondition condition);
 
@@ -85,7 +85,7 @@ private:
     gint inputSourceID = UNREGISTERED_SOURCE;
 
     GIOChannel *m_channel = nullptr;
-    GlibEventDispatcher &m_mainLoop;
+    GLibEventDispatcher &m_mainLoop;
     Event m_events;
 
 };
@@ -94,7 +94,7 @@ private:
 /**
  * That class implements the EventDispatcher interface using glib's main loop functions
  */
-class GlibEventDispatcher :
+class GLibEventDispatcher :
     public EventDispatcher
 {
 public:
@@ -103,10 +103,10 @@ public:
     typedef GLibChannelWatchEventSource FileDescriptorWatchEventSourceType;
 
     /**
-     * Construct an instance using Glib's default main context if we do not have any instance of GlibEventDispatcher using that
+     * Construct an instance using GLib's default main context if we do not have any instance of GLibEventDispatcher using that
      * context yet, otherwise we create a dedicated context
      */
-    GlibEventDispatcher();
+    GLibEventDispatcher();
 
     IdleEventSource *newIdleEventSource(const IdleEventSource::CallBackFunction &callBackFunction) final override;
 
