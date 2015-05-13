@@ -43,6 +43,8 @@ public:
 
     void disable() override;
 
+    bool isEnabled() const override;
+
 private:
     static gboolean onGLibCallback(gpointer data);
 
@@ -70,6 +72,8 @@ public:
 
     void disable() override;
 
+    bool isEnabled() const override;
+
 private:
     static gboolean onTimerCallback(gpointer data);
 
@@ -90,6 +94,10 @@ public:
 
     void enable() override;
 
+    bool isEnabled() const {
+    	return (inputSourceID!=UNREGISTERED_SOURCE);
+    }
+
 private:
     static gboolean onSocketDataAvailableGLibCallback(GIOChannel *gio, GIOCondition condition, gpointer data);
 
@@ -97,7 +105,6 @@ private:
 
     static GIOCondition toGIOCondition(const Event event);
 
-    bool m_isEnabled = false;
     gint inputSourceID = UNREGISTERED_SOURCE;
 
     GIOChannel *m_channel = nullptr;

@@ -1,4 +1,8 @@
 
+cmake_minimum_required(VERSION 2.6)
+
+set(PACKAGE ivi-main-loop)
+
 OPTION( INSTALL_DOC "Enable the installation of Doxygen documentation" OFF )
 
 # Add a doxygen documentation to the targets to be built and installed.

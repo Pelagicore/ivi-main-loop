@@ -39,14 +39,19 @@ public:
     };
 
     /**
-     * Enable the source.
+     * Enables the source.
      */
     virtual void enable() = 0;
 
     /**
-     * Disable the source
+     * Disables the source
      */
     virtual void disable() = 0;
+
+    /**
+     * Returns true if the source is currently enabled, false otherwise
+     */
+    virtual bool isEnabled() const = 0;
 
 };
 
@@ -131,8 +136,8 @@ public:
 
     typedef std::function<ReportStatus(Event)> CallBackFunction;
 
-    ChannelWatchEventSource(const CallBackFunction &callBackFunction) :
-        m_callBack(callBackFunction)
+    ChannelWatchEventSource(FileDescriptor fileDescriptor, const CallBackFunction &callBackFunction) :
+        m_callBack(callBackFunction), m_fileDescriptor(fileDescriptor)
     {
     }
 
@@ -140,9 +145,13 @@ public:
     {
     }
 
+    virtual FileDescriptor getFileDescriptor() const {
+    	return m_fileDescriptor;
+    }
+
 protected:
     CallBackFunction m_callBack;
-
+    FileDescriptor m_fileDescriptor;
 };
 
 /**

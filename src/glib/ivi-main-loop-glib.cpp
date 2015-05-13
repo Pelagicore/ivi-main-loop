@@ -7,9 +7,7 @@
 
 namespace ivi {
 
-#ifdef USE_IVI_LOGGING
 LOG_DECLARE_CONTEXT(iviMainLoopContext, "MAIN", "");
-#endif
 
 /**
  * g_io_add_watch_full:
@@ -77,9 +75,13 @@ GLibIdleEventSource::~GLibIdleEventSource()
     disable();
 }
 
+bool GLibIdleEventSource::isEnabled() const {
+	return (m_source != nullptr);
+}
+
 void GLibIdleEventSource::enable()
 {
-    if (m_source == nullptr) {
+    if (!isEnabled()) {
         m_source = g_idle_source_new();
         g_source_set_callback(m_source, &onGLibCallback, this, nullptr);
         g_source_attach(m_source, m_mainLoop.getGMainContext());
@@ -88,7 +90,7 @@ void GLibIdleEventSource::enable()
 
 void GLibIdleEventSource::disable()
 {
-    if (m_source != nullptr) {
+    if (isEnabled()) {
         g_source_destroy(m_source);
         g_source_unref(m_source);
         m_source = nullptr;
@@ -114,25 +116,29 @@ GLibTimeOutEventSource::~GLibTimeOutEventSource()
 
 void GLibTimeOutEventSource::setDuration(DurationInMilliseconds duration)
 {
+	auto wasEnabled = isEnabled();
     disable();
     m_duration = duration;
-    enable();
+    if (wasEnabled)
+    	enable();
+}
+
+bool GLibTimeOutEventSource::isEnabled() const {
+	return (m_source != nullptr);
 }
 
 void GLibTimeOutEventSource::enable()
 {
-    if (m_source != nullptr) {
-        disable();
+    if (!isEnabled()) {
+        m_source = g_timeout_source_new(getDuration());
+        g_source_set_callback(m_source, onTimerCallback, this, nullptr);
+        g_source_attach(m_source, m_mainLoop.getGMainContext());
     }
-
-    m_source = g_timeout_source_new(getDuration());
-    g_source_set_callback(m_source, onTimerCallback, this, nullptr);
-    g_source_attach(m_source, m_mainLoop.getGMainContext());
 }
 
 void GLibTimeOutEventSource::disable()
 {
-    if (m_source != nullptr) {
+    if (isEnabled()) {
         g_source_destroy(m_source);
         g_source_unref(m_source);
         m_source = nullptr;
@@ -156,9 +162,8 @@ gboolean GLibTimeOutEventSource::onTimerCallback(gpointer data)
 GLibChannelWatchEventSource::GLibChannelWatchEventSource(GLibEventDispatcher &mainLoop, CallBackFunction callBackFunction,
             FileDescriptor fileDescriptor,
             Event events) :
-    ChannelWatchEventSource(callBackFunction), m_mainLoop(mainLoop), m_events(events)
+    ChannelWatchEventSource(fileDescriptor, callBackFunction), m_mainLoop(mainLoop), m_events(events)
 {
-    m_channel = g_io_channel_unix_new(fileDescriptor);
 }
 
 GLibChannelWatchEventSource::~GLibChannelWatchEventSource()
@@ -211,11 +216,10 @@ GIOCondition GLibChannelWatchEventSource::toGIOCondition(const Event event)
 
 void GLibChannelWatchEventSource::enable()
 {
-    if (!m_isEnabled) {
-
+    if (!isEnabled()) {
+        m_channel = g_io_channel_unix_new(getFileDescriptor());
         inputSourceID = g_io_add_watch_full_with_context(m_channel, G_PRIORITY_DEFAULT, toGIOCondition(m_events),
                     onSocketDataAvailableGLibCallback, this, nullptr, m_mainLoop.getGMainContext());
-        m_isEnabled = true;
     }
 }
 

@@ -23,7 +23,7 @@
 #else
 #define log_debug() ivi::Log(std::cout).stream()
 #define log_error() ivi::Log(std::cerr).stream()
-#define LOG_DECLARE_CONTEXT
+#define LOG_DECLARE_CONTEXT(args ...)
 #endif
 
 namespace ivi {

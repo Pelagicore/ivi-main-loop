@@ -22,7 +22,7 @@ inline gboolean glibCallbackLib(gpointer data) {
 }
 
 /**
- * Example of a library function which only accepts a GLib kind of mainloop.
+ * Example of a library function which only accepts a GLib kind of mainloop reference.
  * That would typically be the case if the function was using some OSS software which only support GLib as
  * a main loop (e.g. PulseAudio glib main loop integration)
  */
