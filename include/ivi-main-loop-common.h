@@ -199,10 +199,10 @@ public:
 class EventDispatcher
 {
 
-	/**
-	 * Returns the source manager, which can be used to attach new source to this dispatcher
-	 */
-    virtual EventSourceManager &getSourceFactory() = 0;
+    /**
+     * Returns the source manager, which can be used to attach new source to this dispatcher
+     */
+    virtual EventSourceManager &getSourceManager() = 0;
 
     /**
      * Runs the main loop. That method does not return until the quit() method has been called.

@@ -123,10 +123,6 @@ class GLibEventSourceManager :
     public EventSourceManager
 {
 public:
-    GLibEventSourceManager()
-    {
-    }
-
     GLibIdleEventSource *newIdleEventSource(const IdleEventSource::CallBackFunction &callBackFunction) final override;
 
     GLibTimeOutEventSource *newTimeOutEventSource(const TimeOutEventSource::CallBackFunction &callBackFunction,
@@ -168,7 +164,7 @@ public:
      */
     GLibEventDispatcher(GMainContext *context);
 
-    GLibEventSourceManager &getSourceFactory() override
+    GLibEventSourceManager &getSourceManager() override
     {
         return m_sourceFactory;
     }
@@ -185,6 +181,12 @@ private:
 
 };
 
+/**
+ * This class contains typedefs which user code can use to refer to the exact objects types instead of referring
+ * only to the abstract interfaces. One of the benefits of referring to the exact data type is that a build-time failure
+ * is generated in case of backend type incompatibility.
+ * User code typically accesses those typedefs via the DefaultEventDispatcherTypes class.
+ */
 class GLibEventDispatcherTypes
 {
 public:

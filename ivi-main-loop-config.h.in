@@ -6,7 +6,7 @@ namespace ivi {
 
 typedef @DEFAULT_BACKEND_CLASS@ DefaultEventDispatcherTypes;
 
-// Ensure that our default dispatcher defines typedefs of types which really implement the correct interfaces
+// Ensure that our default dispatcher class defines typedefs of types which implement the interfaces which they are supposed to implement
  
 static_assert(std::is_base_of<ivi::EventSourceManager, DefaultEventDispatcherTypes::EventSourceManager>::value,
 	"Default dispatcher definition is incorrect"

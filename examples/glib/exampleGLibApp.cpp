@@ -37,10 +37,10 @@ int main(int argc, const char * *argv)
     // Now we have a "GENIVI-compatible" dispatcher reference, which we can pass to GENIVI components, under certain conditions
 
     // Call a function which accepts a parameter of type DefaultEventDispatcherType. If the DefaultEventDispatcherType is not set to GLibEventDispatcher, this should cause a compile error
-    typicalGeniviLibraryFunction(dispatcher.getSourceFactory());
+    typicalGeniviLibraryFunction(dispatcher.getSourceManager());
 
     // Call a function which accepts a parameter of type Glib. For sure, this call will not fail here
-    libraryFunctionGLibOnly(dispatcher.getSourceFactory());
+    libraryFunctionGLibOnly(dispatcher.getSourceManager());
 
     // Create the main loop object
     GMainLoop *main_loop = g_main_loop_new(context, FALSE);
