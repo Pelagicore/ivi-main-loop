@@ -21,7 +21,8 @@ using namespace ivi;
 
 int main(int argc, const char * *argv)
 {
-    DefaultEventDispatcherType mainLoop;
+    DefaultEventDispatcherTypes::EventDispatcher mainLoop;
+    auto &sourceFactory = mainLoop.getSourceFactory();
 
     int pipes[2];
     if (pipe(pipes) != 0) {
@@ -35,7 +36,7 @@ int main(int argc, const char * *argv)
     fd_set_non_blocking(pipeOut);
 
     /// Create a timeout which triggers the writing to the pipe
-    DefaultEventDispatcherType::TimeOutEventSourceType timeOutSource(mainLoop, [&]() {
+    DefaultEventDispatcherTypes::TimeOutEventSource timeOutSource(sourceFactory, [&]() {
 
                 char bytes[64] = {};
                 auto n = write(pipeOut, bytes, sizeof(bytes));
@@ -51,7 +52,7 @@ int main(int argc, const char * *argv)
     timeOutSource.enable();
 
     /// Create a timeout which triggers the closing of the pipe
-    DefaultEventDispatcherType::TimeOutEventSourceType timeOutSourceClose(mainLoop, [&]() {
+    DefaultEventDispatcherTypes::TimeOutEventSource timeOutSourceClose(sourceFactory, [&]() {
                 log_debug() << "Closing pipe";
                 close(pipeOut);
                 return TimeOutEventSource::ReportStatus::DISABLE;
@@ -59,7 +60,7 @@ int main(int argc, const char * *argv)
     timeOutSourceClose.enable();
 
     /// Create a timeout which triggers the writing to the pipe
-    DefaultEventDispatcherType::IdleEventSourceType idleSource(mainLoop, [&]() {
+    DefaultEventDispatcherTypes::IdleEventSource idleSource(sourceFactory, [&]() {
                 static int i = 0;
                 i++;
                 log_debug() << "idle called " << i << " times";
@@ -70,14 +71,14 @@ int main(int argc, const char * *argv)
             });
     idleSource.enable();
 
-    DefaultEventDispatcherType::TimeOutEventSourceType timeOutStopIdle(mainLoop, [&]() {
+    DefaultEventDispatcherTypes::TimeOutEventSource timeOutStopIdle(sourceFactory, [&]() {
                 idleSource.disable();
                 log_debug() << "Idle source disabled";
                 return TimeOutEventSource::ReportStatus::DISABLE;
             }, 2000);
     timeOutStopIdle.enable();
 
-    DefaultEventDispatcherType::FileDescriptorWatchEventSourceType pipeInputSource(mainLoop, [&](
+    DefaultEventDispatcherTypes::ChannelWatchEventSource pipeInputSource(sourceFactory, [&](
                 ChannelWatchEventSource::Event e) {
 
                 char bytes[64];
@@ -95,7 +96,7 @@ int main(int argc, const char * *argv)
             }, pipeIn, ChannelWatchEventSource::Event::READ_AVAILABLE);
     pipeInputSource.enable();
 
-    DefaultEventDispatcherType::FileDescriptorWatchEventSourceType hangUpSource(mainLoop, [&](
+    DefaultEventDispatcherTypes::ChannelWatchEventSource hangUpSource(sourceFactory, [&](
                 ChannelWatchEventSource::Event e) {
                 log_debug() << "Hang up detected => exit main loop";
                 mainLoop.quit();

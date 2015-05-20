@@ -152,7 +152,7 @@ gboolean GLibTimeOutEventSource::onTimerCallback(gpointer data)
 
 }
 
-GLibChannelWatchEventSource::GLibChannelWatchEventSource(GLibEventDispatcher &mainLoop, CallBackFunction callBackFunction,
+GLibChannelWatchEventSource::GLibChannelWatchEventSource(GLibEventSourceManager &mainLoop, CallBackFunction callBackFunction,
             FileDescriptor fileDescriptor,
             Event events) :
     ChannelWatchEventSource(fileDescriptor, callBackFunction), m_mainLoop(mainLoop), m_events(events)
@@ -236,23 +236,23 @@ gboolean GLibChannelWatchEventSource::onSocketDataAvailableGLibCallback(GIOChann
 GLibEventDispatcher::GLibEventDispatcher()
 {
     if (!s_bDefaultContextAlreadyUsed) {
-        m_context = nullptr;
+        m_sourceFactory.m_context = nullptr;
         s_bDefaultContextAlreadyUsed = true;
     } else {
-        m_context = g_main_context_new();
+        m_sourceFactory.m_context = g_main_context_new();
     }
 }
 
 GLibEventDispatcher::GLibEventDispatcher(GMainContext *context)
 {
-    m_context = context;
+    m_sourceFactory.m_context = context;
 }
 
 void GLibEventDispatcher::run()
 {
     log_debug() << "run";
 
-    m_mainLoop = g_main_loop_new(m_context, false);
+    m_mainLoop = g_main_loop_new(m_sourceFactory.getGMainContext(), false);
 
     g_main_loop_run(m_mainLoop);
 
@@ -266,18 +266,19 @@ void GLibEventDispatcher::quit()
     g_main_loop_quit(m_mainLoop);
 }
 
-IdleEventSource *GLibEventDispatcher::newIdleEventSource(const IdleEventSource::CallBackFunction &callBackFunction)
+GLibIdleEventSource *GLibEventSourceManager::newIdleEventSource(const IdleEventSource::CallBackFunction &callBackFunction)
 {
     return new GLibIdleEventSource(*this, callBackFunction);
 }
 
-TimeOutEventSource *GLibEventDispatcher::newTimeOutEventSource(const TimeOutEventSource::CallBackFunction &callBackFunction,
+GLibTimeOutEventSource *GLibEventSourceManager::newTimeOutEventSource(
+            const TimeOutEventSource::CallBackFunction &callBackFunction,
             DurationInMilliseconds duration)
 {
     return new GLibTimeOutEventSource(*this, callBackFunction, duration);
 }
 
-ChannelWatchEventSource *GLibEventDispatcher::newChannelWatchEventSource(
+GLibChannelWatchEventSource *GLibEventSourceManager::newChannelWatchEventSource(
             const ChannelWatchEventSource::CallBackFunction &callBackFunction, FileDescriptor fileDescriptor,
             ChannelWatchEventSource::Event events)
 {

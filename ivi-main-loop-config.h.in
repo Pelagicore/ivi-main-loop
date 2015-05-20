@@ -4,6 +4,29 @@
 
 namespace ivi {
 
-typedef @DEFAULT_BACKEND_CLASS@ DefaultEventDispatcherType;
+typedef @DEFAULT_BACKEND_CLASS@ DefaultEventDispatcherTypes;
+
+// Ensure that our default dispatcher defines typedefs of types which really implement the correct interfaces
+ 
+static_assert(std::is_base_of<ivi::EventSourceManager, DefaultEventDispatcherTypes::EventSourceManager>::value,
+	"Default dispatcher definition is incorrect"
+);
+
+static_assert(std::is_base_of<ivi::EventDispatcher, DefaultEventDispatcherTypes::EventDispatcher>::value,
+	"Default dispatcher definition is incorrect"
+);
+
+static_assert(std::is_base_of<ivi::IdleEventSource, DefaultEventDispatcherTypes::IdleEventSource>::value,
+	"Default dispatcher definition is incorrect"
+);
+
+static_assert(std::is_base_of<ivi::TimeOutEventSource, DefaultEventDispatcherTypes::TimeOutEventSource>::value,
+	"Default dispatcher definition is incorrect"
+);
+
+static_assert(std::is_base_of<ivi::ChannelWatchEventSource, DefaultEventDispatcherTypes::ChannelWatchEventSource>::value,
+	"Default dispatcher definition is incorrect"
+);
+
 
 }

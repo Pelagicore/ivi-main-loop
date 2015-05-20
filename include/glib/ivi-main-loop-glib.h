@@ -23,14 +23,14 @@ namespace ivi {
 
 static constexpr int UNREGISTERED_SOURCE = -1;
 
-class GLibEventDispatcher;
+class GLibEventSourceManager;
 
 class GLibIdleEventSource :
     public IdleEventSource
 {
 
 public:
-    GLibIdleEventSource(GLibEventDispatcher &mainLoop, CallBackFunction callBackFunction) :
+    GLibIdleEventSource(GLibEventSourceManager &mainLoop, CallBackFunction callBackFunction) :
         IdleEventSource(callBackFunction),
         m_mainLoop(mainLoop)
     {
@@ -49,7 +49,7 @@ private:
     static gboolean onGLibCallback(gpointer data);
 
     GSource *m_source = nullptr;
-    GLibEventDispatcher &m_mainLoop;
+    GLibEventSourceManager &m_mainLoop;
 
 };
 
@@ -58,7 +58,8 @@ class GLibTimeOutEventSource :
     public TimeOutEventSource
 {
 public:
-    GLibTimeOutEventSource(GLibEventDispatcher &mainLoop, CallBackFunction callBackFunction, DurationInMilliseconds duration) :
+    GLibTimeOutEventSource(GLibEventSourceManager &mainLoop, CallBackFunction callBackFunction,
+                DurationInMilliseconds duration) :
         TimeOutEventSource(duration, callBackFunction), m_mainLoop(mainLoop)
     {
     }
@@ -75,7 +76,7 @@ public:
 private:
     static gboolean onTimerCallback(gpointer data);
 
-    GLibEventDispatcher &m_mainLoop;
+    GLibEventSourceManager &m_mainLoop;
     GSource *m_source = nullptr;
 };
 
@@ -83,7 +84,8 @@ class GLibChannelWatchEventSource :
     public ChannelWatchEventSource
 {
 public:
-    GLibChannelWatchEventSource(GLibEventDispatcher &mainLoop, CallBackFunction callBackFunction, FileDescriptor fileDescriptor,
+    GLibChannelWatchEventSource(GLibEventSourceManager &mainLoop, CallBackFunction callBackFunction,
+                FileDescriptor fileDescriptor,
                 Event events);
 
     ~GLibChannelWatchEventSource();
@@ -107,8 +109,44 @@ private:
     gint inputSourceID = UNREGISTERED_SOURCE;
 
     GIOChannel *m_channel = nullptr;
-    GLibEventDispatcher &m_mainLoop;
+    GLibEventSourceManager &m_mainLoop;
     Event m_events;
+
+};
+
+class GLibEventDispatcher;
+
+/**
+ * That class implements the EventDispatcher interface using glib's main loop functions
+ */
+class GLibEventSourceManager :
+    public EventSourceManager
+{
+public:
+    GLibEventSourceManager()
+    {
+    }
+
+    GLibIdleEventSource *newIdleEventSource(const IdleEventSource::CallBackFunction &callBackFunction) final override;
+
+    GLibTimeOutEventSource *newTimeOutEventSource(const TimeOutEventSource::CallBackFunction &callBackFunction,
+                DurationInMilliseconds duration) final override;
+
+    GLibChannelWatchEventSource *newChannelWatchEventSource(const ChannelWatchEventSource::CallBackFunction &callBackFunction,
+                FileDescriptor filedescriptor,
+                ChannelWatchEventSource::Event events) final override;
+
+    /**
+     * Return the glib main context reference
+     */
+    GMainContext *getGMainContext()
+    {
+        return m_context;
+    }
+
+private:
+    friend GLibEventDispatcher;
+    GMainContext *m_context = nullptr;
 
 };
 
@@ -119,10 +157,6 @@ class GLibEventDispatcher :
     public EventDispatcher
 {
 public:
-    typedef GLibIdleEventSource IdleEventSourceType;
-    typedef GLibTimeOutEventSource TimeOutEventSourceType;
-    typedef GLibChannelWatchEventSource FileDescriptorWatchEventSourceType;
-
     /**
      * Construct an instance using GLib's default main context if we do not have any instance of GLibEventDispatcher using that
      * context yet, otherwise we create a dedicated context
@@ -134,33 +168,31 @@ public:
      */
     GLibEventDispatcher(GMainContext *context);
 
-    IdleEventSource *newIdleEventSource(const IdleEventSource::CallBackFunction &callBackFunction) final override;
-
-    TimeOutEventSource *newTimeOutEventSource(const TimeOutEventSource::CallBackFunction &callBackFunction,
-                DurationInMilliseconds duration) final override;
-
-    ChannelWatchEventSource *newChannelWatchEventSource(const ChannelWatchEventSource::CallBackFunction &callBackFunction,
-                FileDescriptor filedescriptor,
-                ChannelWatchEventSource::Event events) final override;
+    GLibEventSourceManager &getSourceFactory() override
+    {
+        return m_sourceFactory;
+    }
 
     void run() final override;
 
     void quit() final override;
 
-    /**
-     * Return the glib main context reference
-     */
-    GMainContext *getGMainContext()
-    {
-        return m_context;
-    }
-
 private:
-    GMainContext *m_context = nullptr;
     GMainLoop *m_mainLoop = nullptr;
+    GLibEventSourceManager m_sourceFactory;
 
     static bool s_bDefaultContextAlreadyUsed;
 
+};
+
+class GLibEventDispatcherTypes
+{
+public:
+    typedef GLibIdleEventSource IdleEventSource;
+    typedef GLibTimeOutEventSource TimeOutEventSource;
+    typedef GLibChannelWatchEventSource ChannelWatchEventSource;
+    typedef GLibEventDispatcher EventDispatcher;
+    typedef GLibEventSourceManager EventSourceManager;
 };
 
 }

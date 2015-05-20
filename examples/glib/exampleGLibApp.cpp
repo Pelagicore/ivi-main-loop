@@ -23,7 +23,6 @@ gboolean glibCallback(gpointer data)
 
 int main(int argc, const char * *argv)
 {
-
     // Create our context
     GMainContext *context = g_main_context_new();
 
@@ -38,10 +37,10 @@ int main(int argc, const char * *argv)
     // Now we have a "GENIVI-compatible" dispatcher reference, which we can pass to GENIVI components, under certain conditions
 
     // Call a function which accepts a parameter of type DefaultEventDispatcherType. If the DefaultEventDispatcherType is not set to GLibEventDispatcher, this should cause a compile error
-    typicalGeniviLibraryFunction(dispatcher);
+    typicalGeniviLibraryFunction(dispatcher.getSourceFactory());
 
     // Call a function which accepts a parameter of type Glib. For sure, this call will not fail here
-    libraryFunctionGLibOnly(dispatcher);
+    libraryFunctionGLibOnly(dispatcher.getSourceFactory());
 
     // Create the main loop object
     GMainLoop *main_loop = g_main_loop_new(context, FALSE);

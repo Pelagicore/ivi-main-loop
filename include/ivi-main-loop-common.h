@@ -164,13 +164,12 @@ protected:
 };
 
 /**
- * That interface can be used to create new sources attached to a dispatcher, if the concrete source class
- * is  not (or should not be) known at build time
+ * That interface can be used to create new sources attached to a dispatcher
  */
-class EventSourceFactory
+class EventSourceManager
 {
 public:
-    virtual ~EventSourceFactory()
+    virtual ~EventSourceManager()
     {
     }
 
@@ -197,9 +196,13 @@ public:
 /**
  * Event dispatcher interface. An event dispatcher implements a main loop is able to handle various event sources.
  */
-class EventDispatcher :
-    public EventSourceFactory
+class EventDispatcher
 {
+
+	/**
+	 * Returns the source manager, which can be used to attach new source to this dispatcher
+	 */
+    virtual EventSourceManager &getSourceFactory() = 0;
 
     /**
      * Runs the main loop. That method does not return until the quit() method has been called.
