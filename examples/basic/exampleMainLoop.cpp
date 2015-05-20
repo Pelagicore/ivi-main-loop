@@ -21,7 +21,7 @@ using namespace ivi;
 
 int main(int argc, const char * *argv)
 {
-	DefaultEventDispatcherType mainLoop;
+    DefaultEventDispatcherType mainLoop;
 
     int pipes[2];
     if (pipe(pipes) != 0) {
@@ -39,9 +39,9 @@ int main(int argc, const char * *argv)
 
                 char bytes[64] = {};
                 auto n = write(pipeOut, bytes, sizeof(bytes));
-                if ( n == sizeof(bytes)) {
+                if (n == sizeof(bytes)) {
                     log_debug() << "Written " << n << " bytes to pipe";
-               } else {
+                } else {
                     log_error() << "Can not write data to pipe";
                     mainLoop.quit();
                 }

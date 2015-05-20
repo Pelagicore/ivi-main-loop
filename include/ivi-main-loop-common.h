@@ -1,18 +1,18 @@
-    /* Copyright (C) 2015 Jacques Guillou */
-    /* Copyright (C) 2015 Pelagicore AB  <info@pelagicore.com> */
+/* Copyright (C) 2015 Jacques Guillou */
+/* Copyright (C) 2015 Pelagicore AB  <info@pelagicore.com> */
 
-    /* This library is free software; you can redistribute it and/or */
-    /* modify it under the terms of the GNU Library General Public */
-    /* License as published by the Free Software Foundation; either */
-    /* version 2 of the License, or (at your option) any later version. */
+/* This library is free software; you can redistribute it and/or */
+/* modify it under the terms of the GNU Library General Public */
+/* License as published by the Free Software Foundation; either */
+/* version 2 of the License, or (at your option) any later version. */
 
-    /* This library is distributed in the hope that it will be useful, */
-    /* but WITHOUT ANY WARRANTY; without even the implied warranty of */
-    /* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU */
-    /* Library General Public License for more details. */
+/* This library is distributed in the hope that it will be useful, */
+/* but WITHOUT ANY WARRANTY; without even the implied warranty of */
+/* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU */
+/* Library General Public License for more details. */
 
-    /* A copy of the GNU Library General Public License is included in the */
-    /* "LICENSE" file.  */
+/* A copy of the GNU Library General Public License is included in the */
+/* "LICENSE" file.  */
 
 
 #pragma once
@@ -56,7 +56,7 @@ public:
 };
 
 /**
- * An idle event source can be used to be notified whenever a dispatcher has no non-idle to trigger
+ * An idle event source can be used to be notified whenever a dispatcher has no non-idle source to trigger
  */
 class IdleEventSource :
     public EventSource
@@ -103,7 +103,15 @@ public:
         return m_duration;
     }
 
-    virtual void setDuration(DurationInMilliseconds duration) = 0;
+    void setDuration(DurationInMilliseconds duration)
+    {
+        auto wasEnabled = isEnabled();
+        disable();
+        m_duration = duration;
+        if (wasEnabled) {
+            enable();
+        }
+    }
 
 protected:
     DurationInMilliseconds m_duration;
@@ -130,7 +138,7 @@ public:
         /// Some data can be written to the channel without blocking
         WRITE_AVAILABLE = 2,
 
-        /// The channel has been close, which means no data can be read from the corresponding file descriptor
+        /// The channel has been closed, which means no data can be read from the corresponding file descriptor
         HANG_UP = 4
     };
 
@@ -145,8 +153,9 @@ public:
     {
     }
 
-    virtual FileDescriptor getFileDescriptor() const {
-    	return m_fileDescriptor;
+    virtual FileDescriptor getFileDescriptor() const
+    {
+        return m_fileDescriptor;
     }
 
 protected:
@@ -155,7 +164,8 @@ protected:
 };
 
 /**
- * That interface is used to create new sources attached to a dispatcher
+ * That interface can be used to create new sources attached to a dispatcher, if the concrete source class
+ * is  not (or should not be) known at build time
  */
 class EventSourceFactory
 {

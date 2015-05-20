@@ -75,8 +75,9 @@ GLibIdleEventSource::~GLibIdleEventSource()
     disable();
 }
 
-bool GLibIdleEventSource::isEnabled() const {
-	return (m_source != nullptr);
+bool GLibIdleEventSource::isEnabled() const
+{
+    return (m_source != nullptr);
 }
 
 void GLibIdleEventSource::enable()
@@ -114,17 +115,9 @@ GLibTimeOutEventSource::~GLibTimeOutEventSource()
     disable();
 }
 
-void GLibTimeOutEventSource::setDuration(DurationInMilliseconds duration)
+bool GLibTimeOutEventSource::isEnabled() const
 {
-	auto wasEnabled = isEnabled();
-    disable();
-    m_duration = duration;
-    if (wasEnabled)
-    	enable();
-}
-
-bool GLibTimeOutEventSource::isEnabled() const {
-	return (m_source != nullptr);
+    return (m_source != nullptr);
 }
 
 void GLibTimeOutEventSource::enable()
@@ -250,9 +243,9 @@ GLibEventDispatcher::GLibEventDispatcher()
     }
 }
 
-GLibEventDispatcher::GLibEventDispatcher(GMainContext* context)
+GLibEventDispatcher::GLibEventDispatcher(GMainContext *context)
 {
-	m_context = context;
+    m_context = context;
 }
 
 void GLibEventDispatcher::run()

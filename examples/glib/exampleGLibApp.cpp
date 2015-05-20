@@ -15,37 +15,39 @@
 
 using namespace ivi;
 
-gboolean glibCallback(gpointer data) {
-	printf("glib callback called\n");
-	return TRUE;
+gboolean glibCallback(gpointer data)
+{
+    log_debug() << "glib callback called";
+    return TRUE;
 }
 
-int main(int argc, const char * *argv) {
+int main(int argc, const char * *argv)
+{
 
-	// Create our context
-	GMainContext* context = g_main_context_new();
+    // Create our context
+    GMainContext *context = g_main_context_new();
 
-	// Create a source using the glib API
-	GSource * glibSource = g_timeout_source_new(1500);
-	g_source_set_callback(glibSource, glibCallback, nullptr, nullptr);
-	g_source_attach(glibSource, context);
+    // Create a source using the glib API
+    GSource *glibSource = g_timeout_source_new(1500);
+    g_source_set_callback(glibSource, glibCallback, nullptr, nullptr);
+    g_source_attach(glibSource, context);
 
-	// Create our dispatcher object which wraps the glib context
-	GLibEventDispatcher dispatcher(context);
+    // Create our dispatcher object which wraps the glib context
+    GLibEventDispatcher dispatcher(context);
 
-	// Now we have a "GENIVI-compatible" dispatcher reference, which we can pass to GENIVI components, under certain conditions
+    // Now we have a "GENIVI-compatible" dispatcher reference, which we can pass to GENIVI components, under certain conditions
 
-	// Call a function which accepts a parameter of type DefaultEventDispatcherType. If the DefaultEventDispatcherType is not set to GLibEventDispatcher, this should cause a compile error
-	typicalGeniviLibraryFunction(dispatcher);
+    // Call a function which accepts a parameter of type DefaultEventDispatcherType. If the DefaultEventDispatcherType is not set to GLibEventDispatcher, this should cause a compile error
+    typicalGeniviLibraryFunction(dispatcher);
 
-	// Call a function which accepts a parameter of type Glib. For sure, this call will not fail here
-	libraryFunctionGLibOnly(dispatcher);
+    // Call a function which accepts a parameter of type Glib. For sure, this call will not fail here
+    libraryFunctionGLibOnly(dispatcher);
 
-	// Create the main loop object
-	GMainLoop* main_loop = g_main_loop_new(context, FALSE);
+    // Create the main loop object
+    GMainLoop *main_loop = g_main_loop_new(context, FALSE);
 
-	log_debug() << "entering main loop";
-	g_main_loop_run(main_loop);
+    log_debug() << "entering main loop";
+    g_main_loop_run(main_loop);
 
-	return 0;
+    return 0;
 }

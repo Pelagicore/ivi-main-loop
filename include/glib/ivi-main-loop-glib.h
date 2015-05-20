@@ -1,18 +1,18 @@
-    /* Copyright (C) 2015 Jacques Guillou */
-    /* Copyright (C) 2015 Pelagicore AB  <info@pelagicore.com> */
+/* Copyright (C) 2015 Jacques Guillou */
+/* Copyright (C) 2015 Pelagicore AB  <info@pelagicore.com> */
 
-    /* This library is free software; you can redistribute it and/or */
-    /* modify it under the terms of the GNU Library General Public */
-    /* License as published by the Free Software Foundation; either */
-    /* version 2 of the License, or (at your option) any later version. */
+/* This library is free software; you can redistribute it and/or */
+/* modify it under the terms of the GNU Library General Public */
+/* License as published by the Free Software Foundation; either */
+/* version 2 of the License, or (at your option) any later version. */
 
-    /* This library is distributed in the hope that it will be useful, */
-    /* but WITHOUT ANY WARRANTY; without even the implied warranty of */
-    /* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU */
-    /* Library General Public License for more details. */
+/* This library is distributed in the hope that it will be useful, */
+/* but WITHOUT ANY WARRANTY; without even the implied warranty of */
+/* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU */
+/* Library General Public License for more details. */
 
-    /* A copy of the GNU Library General Public License is included in the */
-    /* "LICENSE" file.  */
+/* A copy of the GNU Library General Public License is included in the */
+/* "LICENSE" file.  */
 
 #pragma once
 
@@ -66,8 +66,6 @@ public:
 public:
     ~GLibTimeOutEventSource();
 
-    void setDuration(DurationInMilliseconds duration) override;
-
     void enable() override;
 
     void disable() override;
@@ -94,8 +92,9 @@ public:
 
     void enable() override;
 
-    bool isEnabled() const {
-    	return (inputSourceID!=UNREGISTERED_SOURCE);
+    bool isEnabled() const
+    {
+        return (inputSourceID != UNREGISTERED_SOURCE);
     }
 
 private:
@@ -133,7 +132,7 @@ public:
     /**
      * Construct a glib event dispatcher using the given context
      */
-    GLibEventDispatcher(GMainContext* context);
+    GLibEventDispatcher(GMainContext *context);
 
     IdleEventSource *newIdleEventSource(const IdleEventSource::CallBackFunction &callBackFunction) final override;
 
