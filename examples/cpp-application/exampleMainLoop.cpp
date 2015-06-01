@@ -21,7 +21,7 @@ void fd_set_non_blocking(int fd)
     fcntl(fd, F_SETFL, flags | O_NONBLOCK);
 }
 
-using namespace ivi;
+using namespace ivi_main_loop;
 
 int main(int argc, const char * *argv)
 {

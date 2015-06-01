@@ -1,7 +1,7 @@
 #include "ivi-main-loop.h"
 #include "ivi-main-loop-c.h"
 
-using namespace ivi;
+using namespace ivi_main_loop;
 
 IVIMainLoop_EventDispatcher *ivi_main_loop_event_dispatcher_new()
 {

@@ -13,7 +13,7 @@
 
 #include "exampleLibrary.h"
 
-using namespace ivi;
+using namespace ivi_main_loop;
 
 gboolean glibCallback(gpointer data)
 {

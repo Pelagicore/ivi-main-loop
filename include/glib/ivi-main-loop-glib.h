@@ -19,7 +19,7 @@
 #include "ivi-main-loop-common.h"
 #include "glib.h"
 
-namespace ivi {
+namespace ivi_main_loop {
 
 static constexpr int UNREGISTERED_SOURCE = -1;
 

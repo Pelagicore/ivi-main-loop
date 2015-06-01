@@ -7,7 +7,7 @@
 
 static void *__dso_handle;
 
-namespace ivi {
+namespace ivi_main_loop {
 
 LOG_DECLARE_CONTEXT(iviMainLoopContext, "MAIN", "");
 

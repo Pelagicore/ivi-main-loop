@@ -10,13 +10,13 @@ IVIMainLoop_EventDispatcher *ivi_main_loop_event_dispatcher_new();
 
 void ivi_main_loop_event_dispatcher_run(IVIMainLoop_EventDispatcher *dispatcher);
 
+void ivi_main_loop_event_dispatcher_quit(IVIMainLoop_EventDispatcher *dispatcher);
+
 IVIMainLoop_EventSourceManager *ivi_main_loop_event_dispatcher_get_source_manager(IVIMainLoop_EventDispatcher *dispatcher);
 
 IVIMainLoop_TimeOutEventSource *ivi_main_loop_timeout_source_new(IVIMainLoop_EventSourceManager *sourceManager,
         IVIMainLoop_TimeOut_CallBack callback,
         IVIMainLoop_DurationInMilliseconds duration);
-
-void ivi_main_loop_timeout_source_enable(IVIMainLoop_TimeOutEventSource *source);
 
 IVIMainLoop_IdleEventSource *ivi_main_loop_idle_source_new(IVIMainLoop_EventSourceManager *sourceManager,
         IVIMainLoop_Idle_CallBack callback);
@@ -24,6 +24,14 @@ IVIMainLoop_IdleEventSource *ivi_main_loop_idle_source_new(IVIMainLoop_EventSour
 IVIMainLoop_ChannelWatchEventSource *ivi_main_loop_channel_watch_source_new(IVIMainLoop_EventSourceManager *sourceManager,
         IVIMainLoop_ChannelWatch_CallBack callback, IVIMainLoop_FileDescriptor fileDescriptor,
         IVIMainLoop_ChannelWatchEventSource_Event events);
+
+void ivi_main_loop_timeout_source_enable(IVIMainLoop_TimeOutEventSource *source);
+void ivi_main_loop_idle_source_enable(IVIMainLoop_IdleEventSource *source);
+void ivi_main_loop_channel_watch_source_enable(IVIMainLoop_ChannelWatchEventSource *source);
+
+void ivi_main_loop_timeout_source_disable(IVIMainLoop_TimeOutEventSource *source);
+void ivi_main_loop_idle_source_disable(IVIMainLoop_IdleEventSource *source);
+void ivi_main_loop_channel_watch_source_disable(IVIMainLoop_ChannelWatchEventSource *source);
 
 #ifdef __cplusplus
 }

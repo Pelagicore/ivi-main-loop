@@ -21,12 +21,12 @@
 #ifdef USE_IVI_LOGGING
 #include "ivi-logging.h"
 #else
-#define log_debug() ivi::Log(std::cout).stream()
-#define log_error() ivi::Log(std::cerr).stream()
+#define log_debug() ivi_main_loop::Log(std::cout).stream()
+#define log_error() ivi_main_loop::Log(std::cerr).stream()
 #define LOG_DECLARE_CONTEXT(args ...)
 #endif
 
-namespace ivi {
+namespace ivi_main_loop {
 
 #ifdef USE_IVI_LOGGING
 typedef logging::DefaultLogContext LogContext;

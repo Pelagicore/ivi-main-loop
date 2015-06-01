@@ -21,7 +21,7 @@
 
 #include <functional>
 
-namespace ivi {
+namespace ivi_main_loop {
 
 /**
  * Any event source inherits from this class

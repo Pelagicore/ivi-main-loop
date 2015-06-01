@@ -8,11 +8,12 @@
  * GENIVI code should normally use the DefaultEventDispatcherTypes type, which is a typedef to either
  * a GLibEventDispatcher, or other GLib-free class
  */
-inline void typicalGeniviLibraryFunction(ivi::DefaultEventDispatcherTypes::EventSourceManager &sourceManager)
+inline void typicalGeniviLibraryFunction(ivi_main_loop::DefaultEventDispatcherTypes::EventSourceManager &sourceManager)
 {
-    auto src = new ivi::DefaultEventDispatcherTypes::TimeOutEventSource(sourceManager, [&] () {
+    using namespace ivi_main_loop;
+    auto src = new DefaultEventDispatcherTypes::TimeOutEventSource(sourceManager, [&] () {
                 log_debug() << "Timeout libraryFunction";
-                return ivi::TimeOutEventSource::ReportStatus::KEEP_ENABLED;
+                return TimeOutEventSource::ReportStatus::KEEP_ENABLED;
             }, 2000);
     src->enable();
 }
@@ -28,7 +29,7 @@ inline gboolean glibCallbackLib(gpointer data)
  * That would typically be the case if the function was using some OSS software which only support GLib as
  * a main loop (e.g. PulseAudio glib main loop integration)
  */
-inline void libraryFunctionGLibOnly(ivi::GLibEventSourceManager &sourceManager)
+inline void libraryFunctionGLibOnly(ivi_main_loop::GLibEventSourceManager &sourceManager)
 {
     // Get the GLib GMainContext reference
     GMainContext *context = sourceManager.getGMainContext();

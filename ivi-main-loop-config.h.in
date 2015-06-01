@@ -2,29 +2,29 @@
 
 #include "@DEFAULT_BACKEND@/ivi-main-loop-@DEFAULT_BACKEND@.h"
 
-namespace ivi {
+namespace ivi_main_loop {
 
 typedef @DEFAULT_BACKEND_CLASS@ DefaultEventDispatcherTypes;
 
 // Ensure that our default dispatcher class defines typedefs of types which implement the interfaces which they are supposed to implement
  
-static_assert(std::is_base_of<ivi::EventSourceManager, DefaultEventDispatcherTypes::EventSourceManager>::value,
+static_assert(std::is_base_of<EventSourceManager, DefaultEventDispatcherTypes::EventSourceManager>::value,
 	"Default dispatcher definition is incorrect"
 );
 
-static_assert(std::is_base_of<ivi::EventDispatcher, DefaultEventDispatcherTypes::EventDispatcher>::value,
+static_assert(std::is_base_of<EventDispatcher, DefaultEventDispatcherTypes::EventDispatcher>::value,
 	"Default dispatcher definition is incorrect"
 );
 
-static_assert(std::is_base_of<ivi::IdleEventSource, DefaultEventDispatcherTypes::IdleEventSource>::value,
+static_assert(std::is_base_of<IdleEventSource, DefaultEventDispatcherTypes::IdleEventSource>::value,
 	"Default dispatcher definition is incorrect"
 );
 
-static_assert(std::is_base_of<ivi::TimeOutEventSource, DefaultEventDispatcherTypes::TimeOutEventSource>::value,
+static_assert(std::is_base_of<TimeOutEventSource, DefaultEventDispatcherTypes::TimeOutEventSource>::value,
 	"Default dispatcher definition is incorrect"
 );
 
-static_assert(std::is_base_of<ivi::ChannelWatchEventSource, DefaultEventDispatcherTypes::ChannelWatchEventSource>::value,
+static_assert(std::is_base_of<ChannelWatchEventSource, DefaultEventDispatcherTypes::ChannelWatchEventSource>::value,
 	"Default dispatcher definition is incorrect"
 );
 

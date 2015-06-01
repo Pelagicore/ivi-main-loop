@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ivi {
+namespace ivi_main_loop {
 
 template<typename EnumType>
 bool hasFlag(EnumType value, EnumType flag)
