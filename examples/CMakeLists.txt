@@ -17,6 +17,7 @@ if(NOT PATHS_DEFINED)
   
 endif()
 
-add_subdirectory(basic)
+add_subdirectory(cpp-application)
 add_subdirectory(glib)
+add_subdirectory(c-application)
 #add_subdirectory(basic_optimized)

@@ -5,6 +5,8 @@
 
 #include "assert.h"
 
+static void *__dso_handle;
+
 namespace ivi {
 
 LOG_DECLARE_CONTEXT(iviMainLoopContext, "MAIN", "");

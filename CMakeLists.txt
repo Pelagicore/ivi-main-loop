@@ -39,7 +39,6 @@ if (ENABLE_GLIB_BACKEND)
     add_definitions(${GLIB_CFLAGS_OTHER})
     link_directories(${GLIB_LIBRARY_DIRS} )
     include_directories(${GLIB_INCLUDE_DIRS} )
-    add_subdirectory (src/glib)
     set(DEFAULT_BACKEND glib)
     set(DEFAULT_BACKEND_CLASS GLibEventDispatcherTypes)
     set(ADDITIONAL_PKGCONFIG_DEPENDENCIES glib-2.0)
@@ -65,5 +64,7 @@ set(IVI_MAIN_LOOP_LIBRARIES ivi-main-loop)
 
 set(PATHS_DEFINED 1)
 add_subdirectory(examples)
+
+add_subdirectory (src)
 
 add_subdirectory (doc)

@@ -17,11 +17,11 @@
 
 #pragma once
 
+#include "ivi-main-loop-c-types.h"
+
 #include <functional>
 
 namespace ivi {
-
-typedef int FileDescriptor;
 
 /**
  * Any event source inherits from this class
@@ -32,10 +32,10 @@ public:
     enum class ReportStatus
     {
         /// Returning that value from a source's callback function causes the source to remain enabled
-        KEEP_ENABLED,
+        KEEP_ENABLED = IVIMainLoop_EventSource_ReportStatus::IVI_MAIN_LOOP_KEEP_ENABLED,
 
         /// Returning that value from a source's callback function causes the source to be disabled
-        DISABLE
+        DISABLE = IVIMainLoop_EventSource_ReportStatus::IVI_MAIN_LOOP_DISABLE
     };
 
     /**
@@ -55,11 +55,12 @@ public:
 
 };
 
+
 /**
  * An idle event source can be used to be notified whenever a dispatcher has no non-idle source to trigger
  */
 class IdleEventSource :
-    public EventSource
+    public EventSource, public IVIMainLoop_IdleEventSource
 {
 public:
     typedef std::function<ReportStatus()> CallBackFunction;
@@ -78,13 +79,13 @@ protected:
 
 };
 
-typedef int DurationInMilliseconds;
+typedef IVIMainLoop_DurationInMilliseconds DurationInMilliseconds;
 
 /**
  * A timeout source is triggered after a certain amount of time.
  */
 class TimeOutEventSource :
-    public EventSource
+    public EventSource, public IVIMainLoop_TimeOutEventSource
 {
 public:
     typedef std::function<ReportStatus()> CallBackFunction;
@@ -119,27 +120,29 @@ protected:
 
 };
 
+typedef IVIMainLoop_FileDescriptor FileDescriptor;
+
 /**
  * This kind of source can be used to be notified whenever an event has occurred concerning a channel.
  * The channel is typically identified by a file descriptor.
  */
 class ChannelWatchEventSource :
-    public EventSource
+    public EventSource, public IVIMainLoop_ChannelWatchEventSource
 {
 public:
     enum class Event
     {
         /// No event occurred
-        NONE,
+        NONE = IVIMainLoop_ChannelWatchEventSource_Event::IVI_MAIN_LOOP_NONE,
 
         /// Some data is available from the channel
-        READ_AVAILABLE = 1,
+        READ_AVAILABLE = IVIMainLoop_ChannelWatchEventSource_Event::IVI_MAIN_LOOP_READ_AVAILABLE,
 
         /// Some data can be written to the channel without blocking
-        WRITE_AVAILABLE = 2,
+        WRITE_AVAILABLE = IVIMainLoop_ChannelWatchEventSource_Event::IVI_MAIN_LOOP_WRITE_AVAILABLE,
 
         /// The channel has been closed, which means no data can be read from the corresponding file descriptor
-        HANG_UP = 4
+        HANG_UP = IVIMainLoop_ChannelWatchEventSource_Event::IVI_MAIN_LOOP_HANG_UP
     };
 
     typedef std::function<ReportStatus(Event)> CallBackFunction;
@@ -153,7 +156,7 @@ public:
     {
     }
 
-    virtual FileDescriptor getFileDescriptor() const
+    FileDescriptor getFileDescriptor() const
     {
         return m_fileDescriptor;
     }
@@ -166,7 +169,8 @@ protected:
 /**
  * That interface can be used to create new sources attached to a dispatcher
  */
-class EventSourceManager
+class EventSourceManager :
+    public IVIMainLoop_EventSourceManager
 {
 public:
     virtual ~EventSourceManager()
@@ -196,9 +200,11 @@ public:
 /**
  * Event dispatcher interface. An event dispatcher implements a main loop is able to handle various event sources.
  */
-class EventDispatcher
+class EventDispatcher :
+    public IVIMainLoop_EventDispatcher
 {
 
+public:
     /**
      * Returns the source manager, which can be used to attach new source to this dispatcher
      */

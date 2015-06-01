@@ -4,12 +4,16 @@
  * An idle event source is also used to be notified whenever nothing has to be done.
  */
 
+#include <sys/socket.h>
+#include <fcntl.h>
+#include <stdlib.h>
+#include "unistd.h"
+
 #include "ivi-main-loop.h"
 #include "ivi-main-loop-log.h"
 
-#include <sys/socket.h>
-#include <fcntl.h>
-#include "unistd.h"
+#include "../c-library/c-library.h"
+
 
 void fd_set_non_blocking(int fd)
 {
@@ -103,6 +107,8 @@ int main(int argc, const char * *argv)
                 return ChannelWatchEventSource::ReportStatus::DISABLE;
             }, pipeIn, ChannelWatchEventSource::Event::HANG_UP);
     hangUpSource.enable();
+
+    my_c_library_init_function(&mainLoop.getSourceManager());
 
     // Run the main loop. The method will return after the quit() method has been called
     mainLoop.run();
