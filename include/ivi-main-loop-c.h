@@ -1,6 +1,51 @@
+/* Copyright (C) 2015 Jacques Guillou */
+/* Copyright (C) 2015 Pelagicore AB  <info@pelagicore.com> */
+
+/* This library is free software; you can redistribute it and/or */
+/* modify it under the terms of the GNU Library General Public */
+/* License as published by the Free Software Foundation; either */
+/* version 2 of the License, or (at your option) any later version. */
+
+/* This library is distributed in the hope that it will be useful, */
+/* but WITHOUT ANY WARRANTY; without even the implied warranty of */
+/* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU */
+/* Library General Public License for more details. */
+
+/* A copy of the GNU Library General Public License is included in the */
+/* "LICENSE" file.  */
+
 #pragma once
 
 #include "ivi-main-loop-c-types.h"
+
+typedef struct
+{
+    /// The function to be called
+    IVIMainLoop_EventSource_ReportStatus (*function)(IVIMainLoop_ChannelWatchEventSource_Event event, const void *data);
+
+    /// Some user data to be passed to the callback function
+    const void *data;
+} IVIMainLoop_ChannelWatch_CallBack;
+
+
+typedef struct
+{
+    /// The function to be called
+    IVIMainLoop_EventSource_ReportStatus (*function)(const void *data);
+
+    /// Some user data to be passed to the callback function
+    const void *data;
+} IVIMainLoop_TimeOut_CallBack;
+
+typedef struct
+{
+    /// The function to be called
+    IVIMainLoop_EventSource_ReportStatus (*function)(const void *data);
+
+    /// Some user data to be passed to the callback function
+    const void *data;
+} IVIMainLoop_Idle_CallBack;
+
 
 #ifdef __cplusplus
 extern "C" {

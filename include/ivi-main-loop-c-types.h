@@ -1,3 +1,19 @@
+/* Copyright (C) 2015 Jacques Guillou */
+/* Copyright (C) 2015 Pelagicore AB  <info@pelagicore.com> */
+
+/* This library is free software; you can redistribute it and/or */
+/* modify it under the terms of the GNU Library General Public */
+/* License as published by the Free Software Foundation; either */
+/* version 2 of the License, or (at your option) any later version. */
+
+/* This library is distributed in the hope that it will be useful, */
+/* but WITHOUT ANY WARRANTY; without even the implied warranty of */
+/* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU */
+/* Library General Public License for more details. */
+
+/* A copy of the GNU Library General Public License is included in the */
+/* "LICENSE" file.  */
+
 #pragma once
 
 #ifdef __cplusplus
@@ -42,28 +58,9 @@ typedef enum {
 } IVIMainLoop_EventSource_ReportStatus;
 
 
-typedef struct
-{
-    /// The function to be called
-    IVIMainLoop_EventSource_ReportStatus (*function)(const void *data);
-
-    /// Some user data to be passed to the calback function
-    const void *data;
-} IVIMainLoop_TimeOut_CallBack;
-
-typedef struct
-{
-    /// The function to be called
-    IVIMainLoop_EventSource_ReportStatus (*function)(const void *data);
-
-    /// Some user data to be passed to the callback function
-    const void *data;
-} IVIMainLoop_Idle_CallBack;
-
-
 typedef enum {
     /// No event occurred
-    IVI_MAIN_LOOP_NONE,
+    IVI_MAIN_LOOP_NONE = 0,
 
     /// Some data is available from the channel
     IVI_MAIN_LOOP_READ_AVAILABLE = 1,
@@ -75,15 +72,6 @@ typedef enum {
     IVI_MAIN_LOOP_HANG_UP = 4
 } IVIMainLoop_ChannelWatchEventSource_Event;
 
-
-typedef struct
-{
-    /// The function to be called
-    IVIMainLoop_EventSource_ReportStatus (*function)(IVIMainLoop_ChannelWatchEventSource_Event event, const void *data);
-
-    /// Some user data to be passed to the callback function
-    const void *data;
-} IVIMainLoop_ChannelWatch_CallBack;
 
 #ifdef __cplusplus
 }
