@@ -1,17 +1,14 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-set(PACKAGE ivi-main-loop)
-PROJECT(${PACKAGE})
+PROJECT(ivi-main-loop)
 
 include(GNUInstallDirs)
 
-SET( ${PROJECT_NAME}_MAJOR_VERSION 1 )
-SET( ${PROJECT_NAME}_MINOR_VERSION 0 )
-SET( ${PROJECT_NAME}_PATCH_LEVEL 0 )
+set(PACKAGE_NAME ${CMAKE_PROJECT_NAME}) 
 
-set(VERSION ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION}.${${PROJECT_NAME}_PATCH_LEVEL})
-set(PACKAGE_VERSION ${VERSION})
+set(API_MAJOR_VERSION 0)
+set(PACKAGE_VERSION ${API_MAJOR_VERSION}.1)
 
 # Dependencies
 FIND_PACKAGE(PkgConfig REQUIRED)
@@ -47,14 +44,14 @@ endif()
 
 configure_file(ivi-main-loop-config.h.in ivi-main-loop-config.h @ONLY)
 
-configure_file(ivi-main-loop.pc.in ivi-main-loop.pc @ONLY)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ivi-main-loop.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+configure_file(${PACKAGE_NAME}.pc.in ${PACKAGE_NAME}.pc @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
-set(DEVELOPMENT_INCLUDE_PATH " -I${CMAKE_CURRENT_SOURCE_DIR}/include -I${CMAKE_CURRENT_BINARY_DIR} #")
-set(DEVELOPMENT_LIBRARY_PATH " -L${CMAKE_CURRENT_BINARY_DIR}/src/glib #" )
-configure_file(ivi-main-loop.pc.in ivi-main-loop-uninstalled.pc @ONLY)
+set(UNINSTALLED_INCLUDE_PATH " -I${CMAKE_CURRENT_SOURCE_DIR}/include -I${CMAKE_CURRENT_BINARY_DIR} #")
+set(UNINSTALLED_LIBRARY_PATH " -L${CMAKE_CURRENT_BINARY_DIR}/src/glib #" )
+configure_file(${PACKAGE_NAME}.pc.in ${PACKAGE_NAME}-uninstalled.pc @ONLY)
 if(INSTALL_PKGCONFIG_UNINSTALLED_FILE)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ivi-main-loop-uninstalled.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}-uninstalled.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 endif()
 
 

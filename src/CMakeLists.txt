@@ -13,7 +13,7 @@ add_library( ivi-main-loop SHARED
 set(INCLUDE_FOLDER ../include)
 include_directories(${INCLUDE_FOLDER})
 
-set_target_properties(ivi-main-loop PROPERTIES VERSION ${VERSION} SOVERSION ${${PROJECT_NAME}_MAJOR_VERSION})
+set_target_properties(ivi-main-loop PROPERTIES VERSION ${PACKAGE_VERSION} SOVERSION ${API_MAJOR_VERSION})
 
 TARGET_LINK_LIBRARIES( ivi-main-loop
    ${LOGGING_LIBRARIES}
@@ -29,5 +29,5 @@ INSTALL(TARGETS ivi-main-loop
 set(INCLUDE_FILES ${INCLUDE_FOLDER}/glib/ivi-main-loop-glib.h)
 
 INSTALL(FILES ${INCLUDE_FILES}
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PACKAGE}/glib
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PACKAGE_NAME}/glib
 )
