@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <glib.h>
 
-#include "ivi-main-loop.h"
+#include "ivi-main-loop/ivi-main-loop.h"
 #include "ivi-main-loop-log.h"
 
 #include "exampleLibrary.h"

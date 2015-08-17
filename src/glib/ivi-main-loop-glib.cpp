@@ -287,6 +287,11 @@ GLibChannelWatchEventSource *GLibEventSourceManager::newChannelWatchEventSource(
     return new GLibChannelWatchEventSource(*this, callBackFunction, fileDescriptor, events);
 }
 
+GLibEventSourceManager::GLibEventSourceManager(GMainContext *context) :
+    m_context(context)
+{
+}
+
 bool GLibEventDispatcher::s_bDefaultContextAlreadyUsed = false;
 
 }

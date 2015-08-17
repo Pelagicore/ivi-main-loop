@@ -1,12 +1,14 @@
 
-set(INCLUDE_FILES
-	ivi-main-loop.h
-	ivi-main-loop-c-types.h
-	ivi-main-loop-c.h
-	ivi-main-loop-common.h
-	ivi-main-loop-log.h
+set(DESTINATION_DIR ${CMAKE_INSTALL_INCLUDEDIR}/${PACKAGE_NAME}/${PACKAGE_NAME})
+
+file(GLOB GLIB_INCLUDE_FILES "ivi-main-loop/glib/*.h")
+
+file(GLOB INCLUDE_FILES "ivi-main-loop/*.h")
+
+set(INCLUDE_FILES ${INCLUDE_FILES}
 	${CMAKE_CURRENT_BINARY_DIR}/../ivi-main-loop-config.h
 )
 
-install(FILES ${INCLUDE_FILES} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PACKAGE_NAME})
-
+install(FILES ${INCLUDE_FILES} DESTINATION ${DESTINATION_DIR})
+install(FILES ${GLIB_INCLUDE_FILES} DESTINATION ${DESTINATION_DIR}/glib)
+ 

@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include "ivi-main-loop-common.h"
+#include "ivi-main-loop/ivi-main-loop-common.h"
 #include "glib.h"
 
 namespace ivi_main_loop {
@@ -123,6 +123,8 @@ class GLibEventSourceManager :
     public EventSourceManager
 {
 public:
+    GLibEventSourceManager(GMainContext *context = nullptr);
+
     GLibIdleEventSource *newIdleEventSource(const IdleEventSource::CallBackFunction &callBackFunction) final override;
 
     GLibTimeOutEventSource *newTimeOutEventSource(const TimeOutEventSource::CallBackFunction &callBackFunction,

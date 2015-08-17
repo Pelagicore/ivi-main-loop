@@ -1,5 +1,7 @@
 
-set(LIBRARY_SOURCE_FILES ivi-main-loop.cpp)
+set(LIBRARY_SOURCE_FILES ivi-main-loop.cpp
+                         UNIXSignalHandler.cpp
+)
 
 if(ENABLE_GLIB_BACKEND)
     set(LIBRARY_SOURCE_FILES ${LIBRARY_SOURCE_FILES} glib/ivi-main-loop-glib.cpp)
@@ -26,8 +28,8 @@ INSTALL(TARGETS ivi-main-loop
   DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
 
-set(INCLUDE_FILES ${INCLUDE_FOLDER}/glib/ivi-main-loop-glib.h)
+#set(INCLUDE_FILES ${INCLUDE_FOLDER}/glib/ivi-main-loop-glib.h)
 
-INSTALL(FILES ${INCLUDE_FILES}
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PACKAGE_NAME}/glib
-)
+#INSTALL(FILES ${INCLUDE_FILES}
+#  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PACKAGE_NAME}/glib
+#)
