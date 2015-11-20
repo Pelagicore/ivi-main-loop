@@ -19,7 +19,7 @@ static IVIMainLoop_EventSource_ReportStatus callbackMyCLibrary(const void *data)
 /**
  * Initialize the library using the given source manager object where the library is going to add its event sources
  */
-inline void my_c_library_init_function(IVIMainLoop_EventSourceManager *sourceManager)
+static inline void my_c_library_init_function(IVIMainLoop_EventSourceManager *sourceManager)
 {
     IVIMainLoop_TimeOut_CallBack callback = {.function = callbackMyCLibrary, .data = NULL};
     IVIMainLoop_TimeOutEventSource *source = ivi_main_loop_timeout_source_new(sourceManager, callback, 300);
