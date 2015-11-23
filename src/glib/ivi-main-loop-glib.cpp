@@ -8,7 +8,6 @@
 static void *__dso_handle;
 
 namespace ivi_main_loop {
-
 LOG_DECLARE_CONTEXT(iviMainLoopContext, "MAIN", "");
 
 /**
@@ -40,7 +39,7 @@ guint g_io_add_watch_full_with_context(GIOChannel *channel, gint priority, GIOCo
     if (priority != G_PRIORITY_DEFAULT) {
         g_source_set_priority(source, priority);
     }
-    g_source_set_callback(source, (GSourceFunc) func, user_data, notify);
+    g_source_set_callback(source, (GSourceFunc)func, user_data, notify);
 
     guint id = g_source_attach(source, context);
     g_source_unref(source);
@@ -151,13 +150,14 @@ gboolean GLibTimeOutEventSource::onTimerCallback(gpointer data)
     } else {
         return true;
     }
-
 }
 
 GLibChannelWatchEventSource::GLibChannelWatchEventSource(GLibEventSourceManager &mainLoop, CallBackFunction callBackFunction,
             FileDescriptor fileDescriptor,
-            Event events) :
-    ChannelWatchEventSource(fileDescriptor, callBackFunction), m_mainLoop(mainLoop), m_events(events)
+            Event events)
+    : ChannelWatchEventSource(fileDescriptor, callBackFunction)
+    , m_mainLoop(mainLoop)
+    , m_events(events)
 {
 }
 
@@ -287,11 +287,10 @@ GLibChannelWatchEventSource *GLibEventSourceManager::newChannelWatchEventSource(
     return new GLibChannelWatchEventSource(*this, callBackFunction, fileDescriptor, events);
 }
 
-GLibEventSourceManager::GLibEventSourceManager(GMainContext *context) :
-    m_context(context)
+GLibEventSourceManager::GLibEventSourceManager(GMainContext *context)
+    : m_context(context)
 {
 }
 
 bool GLibEventDispatcher::s_bDefaultContextAlreadyUsed = false;
-
 }

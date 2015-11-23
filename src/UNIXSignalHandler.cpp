@@ -12,7 +12,6 @@
 //#undef USE_SIGNALFD_
 
 namespace ivi_main_loop {
-
 #ifndef USE_SIGNALFD_
 static int s_UNIXSignalsPipe[2];
 
@@ -33,8 +32,8 @@ static bool isRunningInDebugger()
     return (getenv("EclipseVersion") != nullptr);     // If we detect Eclipse, we are probably debugging...
 }
 
-UNIXSignalHandler::UNIXSignalHandler(ivi_main_loop::EventSourceManager &dispatcher, const HandlerMap &handlers) :
-    m_dispatcher(dispatcher)
+UNIXSignalHandler::UNIXSignalHandler(ivi_main_loop::EventSourceManager &dispatcher, const HandlerMap &handlers)
+    : m_dispatcher(dispatcher)
 {
     addHandlers(handlers);
 }
@@ -63,10 +62,12 @@ void UNIXSignalHandler::enable()
     }
 
     unixSignalFileDescriptor = signalfd(-1, &mask, 0);
+
     if (unixSignalFileDescriptor == -1) {
         log_error() << "Error during signalfd() call";
     }
 #else
+
     if (s_UNIXSignalsPipe[0] != 0) {
         log_error() << "Only one signal handler can be installed, unless signalfd() is used";
     }
@@ -83,28 +84,27 @@ void UNIXSignalHandler::enable()
 
 #endif
 
-    m_eventSource.reset(m_dispatcher.newChannelWatchEventSource([this] (ivi_main_loop::ChannelWatchEventSource::Event event) {
-
-        #ifdef USE_SIGNALFD_
+    m_eventSource.reset(m_dispatcher.newChannelWatchEventSource([this](ivi_main_loop::ChannelWatchEventSource::Event event) {
+#ifdef USE_SIGNALFD_
                         struct signalfd_siginfo fdsi;
 
                         int s = read(unixSignalFileDescriptor, &fdsi, sizeof(struct signalfd_siginfo));
+
                         if (s != sizeof(struct signalfd_siginfo)) {
                             log_error() << "Error reading signal value";
                         }
 
                         int signal = fdsi.ssi_signo;
-        #else
+#else
                         int signal;
                         read(unixSignalFileDescriptor, &signal, sizeof(signal));
-        #endif
+#endif
 
                         // Call handler
                         assert(m_handlers.count(signal) != 0);
                         m_handlers[signal](signal);
 
                         return ivi_main_loop::ChannelWatchEventSource::ReportStatus::KEEP_ENABLED;
-
                     }, unixSignalFileDescriptor, ivi_main_loop::ChannelWatchEventSource::Event::READ_AVAILABLE));
 
     m_eventSource->enable();
@@ -116,5 +116,4 @@ void UNIXSignalHandler::addHandlers(const HandlerMap &handlers)
         m_handlers.insert(sig);
     }
 }
-
 }

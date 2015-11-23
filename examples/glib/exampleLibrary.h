@@ -11,7 +11,7 @@
 inline void typicalGeniviLibraryFunction(ivi_main_loop::DefaultEventDispatcherTypes::EventSourceManager &sourceManager)
 {
     using namespace ivi_main_loop;
-    auto src = new DefaultEventDispatcherTypes::TimeOutEventSource(sourceManager, [&] () {
+    auto src = new DefaultEventDispatcherTypes::TimeOutEventSource(sourceManager, [&]() {
                 log_debug() << "Timeout libraryFunction";
                 return TimeOutEventSource::ReportStatus::KEEP_ENABLED;
             }, 2000);
@@ -38,5 +38,4 @@ inline void libraryFunctionGLibOnly(ivi_main_loop::GLibEventSourceManager &sourc
     GSource *glibSource = g_timeout_source_new(1800);
     g_source_set_callback(glibSource, glibCallbackLib, nullptr, nullptr);
     g_source_attach(glibSource, context);
-
 }

@@ -2,7 +2,7 @@
  * Basic example using the main loop abstraction to listen to UNIX signals.
  */
 
-#include "ivi-main-loop/UNIXSignalHandler.h"
+#include "ivi-main-loop/ivi-main-loop-unix-signal.h"
 #include "ivi-main-loop/ivi-main-loop.h"
 #include "ivi-main-loop-log.h"
 
@@ -13,10 +13,11 @@ int main(int argc, const char * *argv)
     DefaultEventDispatcherTypes::EventDispatcher mainLoop;
 
     // Register UNIX signal handler
-    auto signalHandler = [&] (int signal) {
+    auto signalHandler = [&](int signal) {
         log_debug() << "Received signal : " << signal;
         mainLoop.quit();
     };
+
     UNIXSignalHandler handler(mainLoop.getSourceManager(),
             UNIXSignalHandler::HandlerMap {{SIGINT, signalHandler}, {SIGTERM, signalHandler}});
     handler.enable();

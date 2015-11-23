@@ -27,7 +27,6 @@
 #endif
 
 namespace ivi_main_loop {
-
 #ifdef USE_IVI_LOGGING
 typedef logging::DefaultLogContext LogContext;
 LOG_IMPORT_DEFAULT_CONTEXT(iviMainLoopContext);
@@ -37,24 +36,23 @@ LOG_IMPORT_DEFAULT_CONTEXT(iviMainLoopContext);
 class Log
 {
 public:
-    Log(std::ostream &s)
+    Log(std::ostream &s) :
+        m_stream(s)
     {
-        m_stream = &s;
     }
 
     ~Log()
     {
-        *m_stream << std::endl;
+        m_stream << std::endl;
     }
 
     std::ostream &stream()
     {
-        return *m_stream;
+        return m_stream;
     }
 
 private:
-    std::ostream *m_stream = nullptr;
+    std::ostream &m_stream;
 };
 #endif
-
 }
