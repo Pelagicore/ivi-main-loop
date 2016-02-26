@@ -6,7 +6,7 @@
 #include <sys/signalfd.h>
 #endif
 
-#include "UNIXSignalHandler.h"
+#include "ivi-main-loop-unix-signal.h"
 #include "ivi-main-loop-log.h"
 
 //#undef USE_SIGNALFD_
