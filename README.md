@@ -1,5 +1,5 @@
 
-Introduction    {#mainpage}
+Introduction   
 ============
 
 This package provides a main loop abstraction, which can be useful to implement main-loop based software components which do not directly rely on a specific main loop implementation. By relying on this abstraction, a package maintainer gives an integrator the freedom to choose the actual main loop framework to use. Having multiple software components relying on the same main loop framework ensures that components can be combined easily and in a reliable way. It also improves code-reuse, which in turn helps improving the overall code quality.
