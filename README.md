@@ -6,6 +6,11 @@ This package provides a main loop abstraction, which can be useful to implement 
 
 A default implementation of the abstraction is provided using glib's main loop framework, which is one of the popular and widely used main loop frameworks in the OSS.
 
+This software was designed mostly as a proof of concept. As such it is provided "as is." 
+
+Copyright and License information
+=================================
+
 Copyright Pelagicore &copy; 2015
 
 The license of this software is MPL 2.0
